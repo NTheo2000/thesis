@@ -1,25 +1,23 @@
 import React, { useState, useRef } from 'react';
 import { Slider, Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Import for navigation
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import { Bubble } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
 
-// Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, Tooltip, Legend, zoomPlugin);
 
-// Function to get color based on the conformance range
 const getColorForValue = (value: number): string => {
   const colors = [
     '#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
     '#ef3b2c', '#cb181d', '#a50f15', '#67000d'
   ];
-
   const index = Math.min(Math.floor(value * colors.length), colors.length - 1);
   return colors[index];
 };
 
-// New conformance distribution based on your specifications
 const conformanceDistribution = [
   { range: [0, 0.1], count: 70, finalizedPercentage: 20 },
   { range: [0.1, 0.2], count: 50, finalizedPercentage: 30 },
@@ -33,7 +31,6 @@ const conformanceDistribution = [
   { range: [0.9, 1], count: 80, finalizedPercentage: 90 }
 ];
 
-// Generate traces based on the updated distribution
 const traces = conformanceDistribution.flatMap((group) =>
   Array.from({ length: group.count }, () => ({
     conformance: (Math.random() * (group.range[1] - group.range[0])) + group.range[0],
@@ -41,28 +38,26 @@ const traces = conformanceDistribution.flatMap((group) =>
   }))
 );
 
-// Filter data based on the conformance threshold
 const filterDataByThreshold = (threshold: number) => {
   return traces.filter(item => item.conformance >= threshold);
 };
 
-// Prepare bubble chart data
 const prepareChartData = (filteredData: any[]) => {
   const conformanceRanges = conformanceDistribution.map((range) => {
     const tracesInRange = filteredData.filter(item => item.conformance >= range.range[0] && item.conformance < range.range[1]);
 
     return {
-      x: (range.range[0] + range.range[1]) / 2,  // Middle of the conformance range
-      y: range.finalizedPercentage,  // Use the finalized percentage directly from the dataset
-      r: Math.sqrt(tracesInRange.length) * 2,  // Bubble size based on number of traces
-      count: tracesInRange.length  // Number of traces in this range
+      x: (range.range[0] + range.range[1]) / 2,
+      y: range.finalizedPercentage,
+      r: Math.sqrt(tracesInRange.length) * 2,
+      count: tracesInRange.length
     };
   });
 
   return {
     datasets: [
       {
-        label: '',  // Empty label to remove the color box in the legend
+        label: '',
         data: conformanceRanges,
         backgroundColor: conformanceRanges.map(range => getColorForValue(range.x)),
         borderColor: '#000000',
@@ -77,17 +72,17 @@ const options = {
     x: {
       title: {
         display: true,
-        text: 'Conformance',  // X-axis label
+        text: 'Conformance',
       },
       min: 0,
       max: 1,
     },
     y: {
       beginAtZero: true,
-      max: 100,  // Percent scale
+      max: 100,
       title: {
         display: true,
-        text: 'Percentage of Traces Ending with A_finalized',  // Y-axis label
+        text: 'Percentage of Traces Ending with A_finalized',
       },
     },
   },
@@ -95,24 +90,24 @@ const options = {
     zoom: {
       pan: {
         enabled: true,
-        mode: 'xy' as 'xy',  // Enable panning on both axes
+        mode: 'xy' as const,
       },
       zoom: {
         wheel: {
-          enabled: true,  // Enable zooming with the mouse wheel
+          enabled: true,
         },
         pinch: {
-          enabled: true,  // Enable zooming with pinch gestures
+          enabled: true,
         },
-        mode: 'xy' as 'xy',  // Enable zooming on both axes
+        mode: 'xy' as const,
       },
     },
     legend: {
-      display: false,  // Hide the legend to remove the color box
+      display: false,
     },
     tooltip: {
       callbacks: {
-        label: function(tooltipItem: any) {
+        label: function (tooltipItem: any) {
           const dataItem = tooltipItem.raw;
           return `Conformance: ${dataItem.x.toFixed(2)}, ${dataItem.y.toFixed(2)}% ended with "A_finalized", ${Math.round(dataItem.count)} traces`;
         },
@@ -125,21 +120,19 @@ const options = {
 const ConformanceOutcomeChart: React.FC = () => {
   const [conformance, setConformance] = useState<number>(0);
   const chartRef = useRef<any>(null);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     setConformance(newValue as number);
   };
 
-  // Reset function to clear the slider and reset the zoom
   const handleReset = () => {
-    setConformance(0);  // Reset conformance
+    setConformance(0);
     if (chartRef.current) {
-      chartRef.current.resetZoom();  // Reset zoom
+      chartRef.current.resetZoom();
     }
   };
 
-  // Filter data and prepare chart data based on conformance threshold
   const filteredData = filterDataByThreshold(conformance);
   const chartData = prepareChartData(filteredData);
 
@@ -174,27 +167,36 @@ const ConformanceOutcomeChart: React.FC = () => {
         Reset
       </Button>
 
-      {/* Bubble chart for conformance vs percentage ending with "A_finalized" */}
       <Box sx={{ height: 400 }}>
         <Bubble ref={chartRef} data={chartData} options={options} />
       </Box>
 
-      {/* Navigation Button */}
-      <Box sx={{ marginTop: 4 }}>
-        <Button variant="contained" color="primary" onClick={() => navigate('/heatmap-aggr')}>
-          Go to HeatMap Aggregated
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/violation-guidelines')}
+        >
+          Violation Guidelines
         </Button>
-       
-<Button variant="contained" color="secondary" onClick={() => navigate('/violation-guidelines')}>
-  Go to Violation Guidelines
-</Button>
-
+        
+        <Button
+          variant="contained"
+          color="primary"
+          endIcon={<ArrowForwardIcon />}
+          onClick={() => navigate('/heatmap-aggr')}
+        >
+          Conformance Distribution
+        </Button>
       </Box>
     </Box>
   );
 };
 
-export default ConformanceOutcomeChart;
+export default ConformanceOutcomeChart; 
+
+
 
 
 

@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Slider, Box, Typography, TextField, Button, MenuItem, Select } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -26,10 +28,10 @@ const initialLineChartData = [
 
 const ViolationGuidelines: React.FC = () => {
     const [conformance, setConformance] = useState<number>(0);
-    const [selectedChart, setSelectedChart] = useState<string>('Resource');
+    const [selectedChart, setSelectedChart] = useState<string>('Case Amount'); // Default to "Case Amount"
     const [resourceInput, setResourceInput] = useState<string>('');
     const [selectedResources, setSelectedResources] = useState<number[]>([]);
-    const [filteredLineData, setFilteredLineData] = useState(initialLineChartData);
+    const [filteredLineData, setFilteredLineData] = useState(initialLineChartData); // Start with line chart data
     const chartRef = useRef<any>(null);
     const navigate = useNavigate();
 
@@ -43,17 +45,22 @@ const ViolationGuidelines: React.FC = () => {
         const threshold = newValue as number;
         setConformance(threshold);
 
-        // Filter line chart data based on conformance threshold
-        const filteredData = initialLineChartData.filter((point) => point.x >= threshold);
-        setFilteredLineData(filteredData);
+        if (selectedChart === 'Case Amount') {
+            const filteredData = initialLineChartData.filter((point) => point.x >= threshold);
+            setFilteredLineData(filteredData);
+        }
     };
 
     const handleChartChange = (event: any) => {
-        setSelectedChart(event.target.value);
+        const chartType = event.target.value;
+        setSelectedChart(chartType);
         setSelectedResources([]);
         setResourceInput('');
         setConformance(0);
-        setFilteredLineData(initialLineChartData);  // Reset line chart data
+
+        if (chartType === 'Case Amount') {
+            setFilteredLineData(initialLineChartData); // Reset line chart data for case amount
+        }
     };
 
     const handleResourceInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +84,6 @@ const ViolationGuidelines: React.FC = () => {
         }
     };
 
-    // Filtered resource data
     const filteredResources = selectedResources.length > 0
         ? selectedResources.filter((resource) => conformanceValues[resource - 1] >= conformance)
         : resources.filter((_, index) => conformanceValues[index] >= conformance && conformanceValues[index] <= 1);
@@ -86,7 +92,6 @@ const ViolationGuidelines: React.FC = () => {
         ? selectedResources.map((resource) => conformanceValues[resource - 1]).filter((value) => value >= conformance && value <= 1)
         : conformanceValues.filter((value) => value >= conformance && value <= 1);
 
-    // Case Amount Line Chart Data
     const dataAmount = {
         datasets: [
             {
@@ -100,7 +105,6 @@ const ViolationGuidelines: React.FC = () => {
         ],
     };
 
-    // Resource Bar Chart Data
     const dataResource = {
         labels: filteredResources.length > 0
             ? filteredResources.map((resource) => resource)
@@ -169,15 +173,6 @@ const ViolationGuidelines: React.FC = () => {
             },
         },
         plugins: {
-            tooltip: {
-                callbacks: {
-                    label: function (tooltipItem: any) {
-                        const resourceLabel = tooltipItem.label.replace('Resource ', '');
-                        const conformanceValue = tooltipItem.raw;
-                        return `Resource ${resourceLabel}, Conformance: ${conformanceValue.toFixed(3)}`;
-                    },
-                },
-            },
             legend: {
                 display: false,
             },
@@ -240,12 +235,23 @@ const ViolationGuidelines: React.FC = () => {
                 )}
             </Box>
 
-            <Box sx={{ marginTop: 4 }}>
-                <Button variant="contained" color="primary" onClick={() => navigate('/heatmap-aggr')} sx={{ marginRight: 2 }}>
-                    Go to Heat Map
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate('/heatmap-aggr')}
+                >
+                    Conformance Distribution
                 </Button>
-                <Button variant="contained" color="secondary" onClick={() => navigate('/conformance-outcome')}>
-                    Go to Conformance Outcome Chart
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate('/conformance-outcome')}
+                >
+                    Conformance Outcome
                 </Button>
             </Box>
         </Box>
@@ -253,6 +259,8 @@ const ViolationGuidelines: React.FC = () => {
 };
 
 export default ViolationGuidelines;
+
+
 
 
 

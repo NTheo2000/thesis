@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, TextField, Button } from '@mui/material';
+import { Slider, Box, Typography, TextField, IconButton, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -8,21 +10,18 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
 
-// Define the structure of each bin
 interface Bin {
   traces: { trace: string, conformance: number }[];
   averageConformance: number;
   traceCount: number;
 }
 
-// Function to get color based on conformance level
 const getColorForConformance = (conformance: number): string => {
   const colors = ['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'];
   const index = Math.min(Math.floor(conformance * colors.length), colors.length - 1);
   return colors[index];
 };
 
-// Function to aggregate traces into 10 bins
 const aggregateTraces = (traces: { trace: string, conformance: number }[], numBins: number = 10): Bin[] => {
   const binSize = 1 / numBins;
   const bins: Bin[] = Array(numBins).fill(null).map(() => ({
@@ -38,7 +37,6 @@ const aggregateTraces = (traces: { trace: string, conformance: number }[], numBi
     bins[binIndex].traceCount += 1;
   });
 
-  // Calculate average conformance for each bin
   bins.forEach(bin => {
     if (bin.traceCount > 0) {
       bin.averageConformance /= bin.traceCount;
@@ -48,14 +46,13 @@ const aggregateTraces = (traces: { trace: string, conformance: number }[], numBi
   return bins;
 };
 
-// Sample data for 1000 traces and their conformance values
 const traces = Array.from({ length: 1000 }, (_, i) => `Trace ${i + 1}`);
 const conformanceValues = Array.from({ length: 1000 }, () => Math.random());
 
 const HeatMapAggr: React.FC = () => {
   const [conformance, setConformance] = useState<number>(0);
   const [selectedTraces, setSelectedTraces] = useState<number[]>([]);
-  const [traceInput, setTraceInput] = useState<string>(''); // Store input text
+  const [traceInput, setTraceInput] = useState<string>('');
   const chartRef = useRef<any>(null);
   const navigate = useNavigate();
 
@@ -87,23 +84,20 @@ const HeatMapAggr: React.FC = () => {
     }
   };
 
-  // Filter data based on conformance threshold
   const filteredData = traces
     .map((trace, index) => ({ trace, conformance: conformanceValues[index] }))
     .filter(item => item.conformance >= conformance);
 
-  // If specific traces are selected, only show them
   let data;
   let chartOptions;
 
   if (selectedTraces.length > 0) {
-    // Filter only the selected traces from the conformance data
     const selectedData = selectedTraces
       .map((traceNum) => ({
         trace: `Trace ${traceNum}`,
-        conformance: conformanceValues[traceNum - 1], // Original trace data
+        conformance: conformanceValues[traceNum - 1],
       }))
-      .filter((item) => item.conformance >= conformance); // Only show traces above conformance threshold
+      .filter((item) => item.conformance >= conformance);
 
     data = {
       labels: selectedData.map((item) => item.trace),
@@ -236,8 +230,8 @@ const HeatMapAggr: React.FC = () => {
   return (
     <Box sx={{ width: 800, height: 900, margin: '0 auto' }}>
       <Typography variant="h5" gutterBottom align="center">
-                Conformance Distribution
-            </Typography>
+        Conformance Distribution
+      </Typography>
       <Typography variant="h6" gutterBottom>
         Conformance Threshold
       </Typography>
@@ -271,31 +265,37 @@ const HeatMapAggr: React.FC = () => {
         sx={{ marginBottom: 2 }}
       />
 
-      <Button variant="contained" color="primary" onClick={handleResetSelection} sx={{ marginBottom: 2 }}>
-        Reset Selections
-      </Button>
-
-      {/* Heatmap-like Bar Chart */}
       <Box sx={{ height: 500 }}>
         <Bar ref={chartRef} data={data} options={chartOptions} />
       </Box>
 
-      {/* Navigation Button to ConformanceOutcomeChart */}
-      <Box sx={{ marginTop: 4 }}>
-        <Button variant="contained" color="primary" onClick={() => navigate('/conformance-outcome')}>
-          Go to Conformance Outcome Chart
+      {/* Navigation Buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/view-bpmn')}
+        >
+          View BPMN
         </Button>
-        
-<Button variant="contained" color="secondary" onClick={() => navigate('/violation-guidelines')}>
-  Go to Violation Guidelines
-</Button>
 
+        <Button
+          variant="contained"
+          color="primary"
+          endIcon={<ArrowForwardIcon />}
+          onClick={() => navigate('/violation-guidelines')}
+        >
+          Violation Guidelines
+        </Button>
       </Box>
     </Box>
   );
 };
 
 export default HeatMapAggr;
+
+
 
 
 
