@@ -1,5 +1,3 @@
-// ViewBPMN.tsx
-
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +8,7 @@ const ViewBPMN: React.FC = () => {
   const navigate = useNavigate();
   const bpmnContainerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<BpmnNavigatedViewer | null>(null);
-  const { bpmnFileContent } = useFileContext();
+  const { bpmnFileContent, setExtractedElements } = useFileContext();
 
   useEffect(() => {
     if (bpmnFileContent && bpmnContainerRef.current) {
@@ -21,9 +19,24 @@ const ViewBPMN: React.FC = () => {
         });
       }
 
-      viewerRef.current.importXML(bpmnFileContent)
+      viewerRef.current
+        .importXML(bpmnFileContent)
         .then(() => {
-          const canvas = viewerRef.current!.get('canvas') as any;  // Cast to any to avoid TypeScript error
+          const canvas = viewerRef.current!.get('canvas') as any;
+          const elementRegistry = viewerRef.current!.get('elementRegistry') as import('diagram-js/lib/core/ElementRegistry').default;
+
+          // Extract IDs and names of all BPMN tasks
+          const elements = elementRegistry
+            .getAll()
+            .filter((element) => element.type === 'bpmn:Task')
+            .map((element) => ({
+              id: element.id,
+              name: element.businessObject.name || 'Unnamed Task',
+            }));
+
+          console.log('Extracted BPMN Elements:', elements);
+          setExtractedElements(elements); // Store extracted elements in context
+
           canvas.zoom('fit-viewport');
         })
         .catch((error: unknown) => {
@@ -37,9 +50,8 @@ const ViewBPMN: React.FC = () => {
         viewerRef.current = null;
       }
     };
-  }, [bpmnFileContent]);
+  }, [bpmnFileContent, setExtractedElements]);
 
-  // Helper functions for zoom controls
   const handleZoomIn = () => {
     const canvas = viewerRef.current?.get('canvas') as any;
     canvas.zoom(canvas.zoom() + 0.2);
@@ -53,10 +65,6 @@ const ViewBPMN: React.FC = () => {
   const handleResetZoom = () => {
     const canvas = viewerRef.current?.get('canvas') as any;
     canvas.zoom('fit-viewport');
-  };
-
-  const handleNavigateToHeatMap = () => {
-    navigate('/heatmap-aggr');
   };
 
   return (
@@ -80,26 +88,41 @@ const ViewBPMN: React.FC = () => {
         }}
       />
 
-      {/* Zoom Controls */}
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
-        <Button variant="contained" onClick={handleZoomIn}>Zoom In</Button>
-        <Button variant="contained" onClick={handleZoomOut}>Zoom Out</Button>
-        <Button variant="contained" onClick={handleResetZoom}>Reset View</Button>
+        <Button variant="contained" onClick={handleZoomIn}>
+          Zoom In
+        </Button>
+        <Button variant="contained" onClick={handleZoomOut}>
+          Zoom Out
+        </Button>
+        <Button variant="contained" onClick={handleResetZoom}>
+          Reset View
+        </Button>
       </Stack>
 
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleNavigateToHeatMap} 
-        sx={{ marginTop: 4 }}
-      >
-        View Visualizations
-      </Button>
+      <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/heatmap-aggr')}
+        >
+          View Visualizations
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => navigate('/inductive-visual-miner')}
+        >
+          Inductive Visual Miner
+        </Button>
+      </Stack>
     </Box>
   );
 };
 
 export default ViewBPMN;
+
+
 
 
 
