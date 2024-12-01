@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+/* Add styles for highlighted problematic activities */
+.highlight-problematic rect,
+.highlight-problematic polygon {
+  stroke: #FF0000 !important;
+  stroke-width: 4 !important;
+  fill: #FFCCCC !important; /* Optional: Add a light red background */
+}
+.bpmn-container {
+  position: relative;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+
+
