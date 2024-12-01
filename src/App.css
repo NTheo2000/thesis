@@ -48,6 +48,18 @@
   background-color: #f9f9f9;
   overflow: hidden;
 }
+/* Disable hover effect on BPMN elements */
+.djs-hover .djs-visual,
+.djs-hover {
+  stroke: none !important;
+  fill: none !important;
+}
 
+/* Ensure no additional hover filters or styles are applied */
+.djs-hover {
+  filter: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
 
 

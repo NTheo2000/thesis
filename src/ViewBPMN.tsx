@@ -1,35 +1,61 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import BpmnNavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
+import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { useFileContext } from './FileContext';
 
 const ViewBPMN: React.FC = () => {
   const navigate = useNavigate();
   const bpmnContainerRef = useRef<HTMLDivElement | null>(null);
-  const viewerRef = useRef<BpmnNavigatedViewer | null>(null);
+  const modelerRef = useRef<BpmnModeler | null>(null);
   const { bpmnFileContent, setExtractedElements } = useFileContext();
+
+  const disableHoverEffects = () => {
+    if (modelerRef.current) {
+      const eventBus = modelerRef.current.get('eventBus') as any;
+
+      // Disable hover events
+      eventBus.off('element.hover');
+      eventBus.off('element.out');
+    }
+  };
+
+  const highlightActivity = (activityId: string) => {
+    if (modelerRef.current) {
+      const elementRegistry = modelerRef.current.get('elementRegistry') as any;
+      const modeling = modelerRef.current.get('modeling') as any;
+
+      const element = elementRegistry.get(activityId);
+      if (element) {
+        modeling.setColor([element], {
+          stroke: 'red',
+          fill: 'lightpink',
+        });
+      } else {
+        console.warn(`Element with ID ${activityId} not found`);
+      }
+    }
+  };
 
   useEffect(() => {
     if (bpmnFileContent && bpmnContainerRef.current) {
-      if (!viewerRef.current) {
-        viewerRef.current = new BpmnNavigatedViewer({
+      if (!modelerRef.current) {
+        modelerRef.current = new BpmnModeler({
           container: bpmnContainerRef.current,
-          keyboard: { bindTo: window },
         });
       }
 
-      viewerRef.current
+      modelerRef.current
         .importXML(bpmnFileContent)
         .then(() => {
-          const canvas = viewerRef.current!.get('canvas') as any;
-          const elementRegistry = viewerRef.current!.get('elementRegistry') as import('diagram-js/lib/core/ElementRegistry').default;
+          const canvas = modelerRef.current!.get('canvas') as any;
+          const elementRegistry = modelerRef.current!.get('elementRegistry') as any;
 
           // Extract IDs and names of all BPMN tasks
           const elements = elementRegistry
             .getAll()
-            .filter((element) => element.type === 'bpmn:Task')
-            .map((element) => ({
+            .filter((element: any) => element.type === 'bpmn:Task')
+            .map((element: any) => ({
               id: element.id,
               name: element.businessObject.name || 'Unnamed Task',
             }));
@@ -38,6 +64,12 @@ const ViewBPMN: React.FC = () => {
           setExtractedElements(elements); // Store extracted elements in context
 
           canvas.zoom('fit-viewport');
+
+          // Disable hover effects
+          disableHoverEffects();
+
+          // Highlight a specific activity (replace 'Activity_1drj3wk' with your desired activity ID)
+          highlightActivity('Activity_1drj3wk');
         })
         .catch((error: unknown) => {
           console.error('Error rendering BPMN diagram:', error);
@@ -45,26 +77,26 @@ const ViewBPMN: React.FC = () => {
     }
 
     return () => {
-      if (viewerRef.current) {
-        viewerRef.current.destroy();
-        viewerRef.current = null;
+      if (modelerRef.current) {
+        modelerRef.current.destroy();
+        modelerRef.current = null;
       }
     };
   }, [bpmnFileContent, setExtractedElements]);
 
   const handleZoomIn = () => {
-    const canvas = viewerRef.current?.get('canvas') as any;
-    canvas.zoom(canvas.zoom() + 0.2);
+    const canvas = modelerRef.current?.get('canvas') as any;
+    canvas?.zoom(canvas.zoom() + 0.2);
   };
 
   const handleZoomOut = () => {
-    const canvas = viewerRef.current?.get('canvas') as any;
-    canvas.zoom(canvas.zoom() - 0.2);
+    const canvas = modelerRef.current?.get('canvas') as any;
+    canvas?.zoom(canvas.zoom() - 0.2);
   };
 
   const handleResetZoom = () => {
-    const canvas = viewerRef.current?.get('canvas') as any;
-    canvas.zoom('fit-viewport');
+    const canvas = modelerRef.current?.get('canvas') as any;
+    canvas?.zoom('fit-viewport');
   };
 
   return (
@@ -121,6 +153,14 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
+
+
+
+
+
+
 
 
 
