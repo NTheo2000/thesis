@@ -20,21 +20,43 @@ const ViewBPMN: React.FC = () => {
     }
   };
 
-  const highlightActivity = (activityId: string) => {
+  const highlightActivity = (activityId: string, color: { stroke: string; fill: string }) => {
     if (modelerRef.current) {
       const elementRegistry = modelerRef.current.get('elementRegistry') as any;
       const modeling = modelerRef.current.get('modeling') as any;
 
       const element = elementRegistry.get(activityId);
       if (element) {
-        modeling.setColor([element], {
-          stroke: 'red',
-          fill: 'lightpink',
-        });
+        modeling.setColor([element], color);
       } else {
         console.warn(`Element with ID ${activityId} not found`);
       }
     }
+  };
+
+  const applyColors = () => {
+    // Red (Critical/Rejected)
+    const redActivities = [
+      'Activity_16j9p78', 'Activity_0h8ae1b', 'Activity_1ua672n', 'Activity_00kmeo1',
+      'Activity_0ect789', 'Activity_1b8fzfh', 'Activity_0v8bmmj', 'Activity_1vy44rn',
+      'Activity_1s7bzv0', 'Activity_12k66qk', 'Activity_1drj3wk'
+    ];
+    redActivities.forEach(id => highlightActivity(id, { stroke: 'red', fill: 'lightpink' }));
+
+    // Orange (In-Progress/Neutral)
+    const orangeActivities = [
+      'Activity_0y75frc', 'Activity_17dszm4', 'Activity_0y9in93', 'Activity_14fjgjx',
+      'Activity_0bi3xvb', 'Activity_1ttad5g'
+    ];
+    orangeActivities.forEach(id => highlightActivity(id, { stroke: 'orange', fill: 'lightyellow' }));
+
+    // Green (Approved/Completed)
+    const greenActivities = [
+      'Activity_0h5rfru', 'Activity_0vwot0o', 'Activity_16cyojo', 'Activity_0dkgijr',
+      'Activity_1i0g780', 'Activity_1pkrvgt', 'Activity_077hrrh', 'Activity_1e3872g',
+      'Activity_1q0ivgg', 'Activity_03fzalw'
+    ];
+    greenActivities.forEach(id => highlightActivity(id, { stroke: 'green', fill: 'lightgreen' }));
   };
 
   useEffect(() => {
@@ -68,8 +90,8 @@ const ViewBPMN: React.FC = () => {
           // Disable hover effects
           disableHoverEffects();
 
-          // Highlight a specific activity (replace 'Activity_1drj3wk' with your desired activity ID)
-          highlightActivity('Activity_1drj3wk');
+          // Apply colors to activities
+          applyColors();
         })
         .catch((error: unknown) => {
           console.error('Error rendering BPMN diagram:', error);
@@ -140,19 +162,14 @@ const ViewBPMN: React.FC = () => {
         >
           View Visualizations
         </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => navigate('/inductive-visual-miner')}
-        >
-          Inductive Visual Miner
-        </Button>
       </Stack>
     </Box>
   );
 };
 
 export default ViewBPMN;
+
+
 
 
 
