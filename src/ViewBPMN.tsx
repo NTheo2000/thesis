@@ -1,8 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { useFileContext } from './FileContext';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+
+const COLORS = {
+  red: { stroke: 'red', fill: 'lightpink' },
+  orange: { stroke: 'orange', fill: '#FFD580' }, // Adjusted lighter orange
+  green: { stroke: 'green', fill: 'lightgreen' },
+};
 
 const ViewBPMN: React.FC = () => {
   const navigate = useNavigate();
@@ -10,11 +17,15 @@ const ViewBPMN: React.FC = () => {
   const modelerRef = useRef<BpmnModeler | null>(null);
   const { bpmnFileContent, setExtractedElements } = useFileContext();
 
+  const [activityCounts, setActivityCounts] = useState({
+    red: 0,
+    orange: 0,
+    green: 0,
+  });
+
   const disableHoverEffects = () => {
     if (modelerRef.current) {
       const eventBus = modelerRef.current.get('eventBus') as any;
-
-      // Disable hover events
       eventBus.off('element.hover');
       eventBus.off('element.out');
     }
@@ -35,28 +46,31 @@ const ViewBPMN: React.FC = () => {
   };
 
   const applyColors = () => {
-    // Red (Critical/Rejected)
     const redActivities = [
       'Activity_16j9p78', 'Activity_0h8ae1b', 'Activity_1ua672n', 'Activity_00kmeo1',
       'Activity_0ect789', 'Activity_1b8fzfh', 'Activity_0v8bmmj', 'Activity_1vy44rn',
-      'Activity_1s7bzv0', 'Activity_12k66qk', 'Activity_1drj3wk'
+      'Activity_1s7bzv0', 'Activity_12k66qk', 'Activity_1drj3wk',
     ];
-    redActivities.forEach(id => highlightActivity(id, { stroke: 'red', fill: 'lightpink' }));
+    redActivities.forEach((id) => highlightActivity(id, COLORS.red));
 
-    // Orange (In-Progress/Neutral)
     const orangeActivities = [
       'Activity_0y75frc', 'Activity_17dszm4', 'Activity_0y9in93', 'Activity_14fjgjx',
-      'Activity_0bi3xvb', 'Activity_1ttad5g'
+      'Activity_0bi3xvb', 'Activity_1ttad5g',
     ];
-    orangeActivities.forEach(id => highlightActivity(id, { stroke: 'orange', fill: 'lightyellow' }));
+    orangeActivities.forEach((id) => highlightActivity(id, COLORS.orange));
 
-    // Green (Approved/Completed)
     const greenActivities = [
       'Activity_0h5rfru', 'Activity_0vwot0o', 'Activity_16cyojo', 'Activity_0dkgijr',
       'Activity_1i0g780', 'Activity_1pkrvgt', 'Activity_077hrrh', 'Activity_1e3872g',
-      'Activity_1q0ivgg', 'Activity_03fzalw'
+      'Activity_1q0ivgg', 'Activity_03fzalw',
     ];
-    greenActivities.forEach(id => highlightActivity(id, { stroke: 'green', fill: 'lightgreen' }));
+    greenActivities.forEach((id) => highlightActivity(id, COLORS.green));
+
+    setActivityCounts({
+      red: redActivities.length,
+      orange: orangeActivities.length,
+      green: greenActivities.length,
+    });
   };
 
   useEffect(() => {
@@ -73,7 +87,6 @@ const ViewBPMN: React.FC = () => {
           const canvas = modelerRef.current!.get('canvas') as any;
           const elementRegistry = modelerRef.current!.get('elementRegistry') as any;
 
-          // Extract IDs and names of all BPMN tasks
           const elements = elementRegistry
             .getAll()
             .filter((element: any) => element.type === 'bpmn:Task')
@@ -82,15 +95,9 @@ const ViewBPMN: React.FC = () => {
               name: element.businessObject.name || 'Unnamed Task',
             }));
 
-          console.log('Extracted BPMN Elements:', elements);
-          setExtractedElements(elements); // Store extracted elements in context
-
+          setExtractedElements(elements);
           canvas.zoom('fit-viewport');
-
-          // Disable hover effects
           disableHoverEffects();
-
-          // Apply colors to activities
           applyColors();
         })
         .catch((error: unknown) => {
@@ -121,8 +128,14 @@ const ViewBPMN: React.FC = () => {
     canvas?.zoom('fit-viewport');
   };
 
+  const data = [
+    { name: 'Low Conformance', value: activityCounts.red, color: COLORS.red.fill },
+    { name: 'Medium Conformance', value: activityCounts.orange, color: COLORS.orange.fill },
+    { name: 'High Conformance', value: activityCounts.green, color: COLORS.green.fill },
+  ];
+
   return (
-    <Box sx={{ width: '100%', maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: 4 }}>
+    <Box sx={{ width: '100%', maxWidth: 1200, margin: '0 auto', textAlign: 'center', padding: 4 }}>
       <Typography variant="h4" gutterBottom>
         BPMN File Viewer
       </Typography>
@@ -135,9 +148,6 @@ const ViewBPMN: React.FC = () => {
           border: '1px solid #ccc',
           borderRadius: '4px',
           marginTop: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           overflow: 'hidden',
         }}
       />
@@ -153,6 +163,45 @@ const ViewBPMN: React.FC = () => {
           Reset View
         </Button>
       </Stack>
+
+      <Box sx={{ marginTop: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Legend
+        </Typography>
+        <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.red.fill, marginRight: 1 }} />
+            <Typography>Low Conformance</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.orange.fill, marginRight: 1 }} />
+            <Typography>Medium Conformance</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.green.fill, marginRight: 1 }} />
+            <Typography>High Conformance</Typography>
+          </Box>
+        </Stack>
+      </Box>
+
+      <Box sx={{ marginTop: 4, display: 'flex', justifyContent: 'center' }}>
+        <PieChart width={300} height={300}>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            label
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </Box>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
         <Button
