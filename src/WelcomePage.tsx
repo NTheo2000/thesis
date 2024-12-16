@@ -1,9 +1,9 @@
-// WelcomePage.tsx
-
 import React, { useState } from 'react';
-import { Box, Typography, Button, TextField, Paper } from '@mui/material';
+import { Box, Typography, Button, Stack, TextField, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFileContext } from './FileContext';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const WelcomePage: React.FC = () => {
   const [bpmnFile, setBpmnFile] = useState<File | null>(null);
@@ -37,61 +37,87 @@ const WelcomePage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, margin: '0 auto', textAlign: 'center', padding: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ width: '100%', maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: 4 }}>
+      {/* Page Title */}
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
         Welcome to the Conformance Analysis App
       </Typography>
-      <Typography variant="body1" gutterBottom>
-        Please upload your BPMN and CSV files to get started.
+      <Typography variant="body1" gutterBottom sx={{ marginBottom: 3 }}>
+        Upload your BPMN and CSV files to start analyzing process conformance.
       </Typography>
 
-      <Paper sx={{ padding: 2, marginBottom: 3, boxShadow: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Upload BPMN File
-        </Typography>
-        <TextField
-          type="file"
-          inputProps={{ accept: '.bpmn' }}
-          onChange={(event) => handleFileChange(event, setBpmnFile, setBpmnFileContent, 'bpmn')}
-          fullWidth
-          variant="outlined"
-          helperText={bpmnFile ? `Selected: ${bpmnFile.name}` : "Please upload a .bpmn file"}
-        />
-      </Paper>
+      <Stack spacing={3}>
+        {/* BPMN File Upload */}
+        <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 3, textAlign: 'left' }}>
+          <Typography variant="h6" gutterBottom>
+            <UploadFileIcon sx={{ marginRight: 1, verticalAlign: 'middle' }} />
+            Upload BPMN File
+          </Typography>
+          <TextField
+            type="file"
+            inputProps={{ accept: '.bpmn' }}
+            onChange={(event) => handleFileChange(event, setBpmnFile, setBpmnFileContent, 'bpmn')}
+            fullWidth
+            variant="outlined"
+            helperText={
+              bpmnFile ? (
+                `Selected File: ${bpmnFile.name}`
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Please upload a valid `.bpmn` file
+                </Typography>
+              )
+            }
+          />
+        </Paper>
 
-      <Paper sx={{ padding: 2, marginBottom: 4, boxShadow: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Upload CSV File
-        </Typography>
-        <TextField
-          type="file"
-          inputProps={{ accept: '.csv' }}
-          onChange={(event) => handleFileChange(event, setCsvFile, setCsvFileContent, 'csv')}
-          fullWidth
-          variant="outlined"
-          helperText={csvFile ? `Selected: ${csvFile.name}` : "Please upload a .csv file"}
-        />
-      </Paper>
+        {/* CSV File Upload */}
+        <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 3, textAlign: 'left' }}>
+          <Typography variant="h6" gutterBottom>
+            <UploadFileIcon sx={{ marginRight: 1, verticalAlign: 'middle' }} />
+            Upload CSV File
+          </Typography>
+          <TextField
+            type="file"
+            inputProps={{ accept: '.csv' }}
+            onChange={(event) => handleFileChange(event, setCsvFile, setCsvFileContent, 'csv')}
+            fullWidth
+            variant="outlined"
+            helperText={
+              csvFile ? (
+                `Selected File: ${csvFile.name}`
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Please upload a valid `.csv` file
+                </Typography>
+              )
+            }
+          />
+        </Paper>
 
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleNavigateToViewBPMN} 
-        disabled={!bpmnFile}
-        sx={{
-          padding: '10px 20px',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          width: '100%',
-          maxWidth: 300,
-          backgroundColor: !bpmnFile ? 'grey.400' : 'primary.main',
-          '&:hover': {
-            backgroundColor: !bpmnFile ? 'grey.400' : 'primary.dark',
-          },
-        }}
-      >
-        View BPMN
-      </Button>
+        {/* Action Button */}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleNavigateToViewBPMN}
+          disabled={!bpmnFile}
+          startIcon={<VisibilityIcon />}
+          sx={{
+            padding: '12px 24px',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            width: '100%',
+            maxWidth: 300,
+            backgroundColor: !bpmnFile ? 'grey.400' : 'primary.main',
+            '&:hover': {
+              backgroundColor: !bpmnFile ? 'grey.400' : 'primary.dark',
+            },
+            alignSelf: 'center',
+          }}
+        >
+          View BPMN
+        </Button>
+      </Stack>
     </Box>
   );
 };

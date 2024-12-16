@@ -143,6 +143,7 @@ const ViewBPMN: React.FC = () => {
       <Box
         ref={bpmnContainerRef}
         sx={{
+          position: 'relative', // Enable absolute positioning within this container
           width: '100%',
           height: '600px',
           border: '1px solid #ccc',
@@ -150,24 +151,44 @@ const ViewBPMN: React.FC = () => {
           marginTop: 2,
           overflow: 'hidden',
         }}
-      />
+      >
+        {/* Pie Chart Positioned in Bottom-Right Corner */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 10,
+            right: 10,
+            width: 150,
+            height: 150,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', // Add slight shadow
+          }}
+        >
+          <PieChart width={150} height={150}>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={70}
+              label={({ value }) => value} // Add numbers as labels
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </Box>
+      </Box>
 
-      <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
-        <Button variant="contained" onClick={handleZoomIn}>
-          Zoom In
-        </Button>
-        <Button variant="contained" onClick={handleZoomOut}>
-          Zoom Out
-        </Button>
-        <Button variant="contained" onClick={handleResetZoom}>
-          Reset View
-        </Button>
-      </Stack>
-
+      {/* Legend */}
       <Box sx={{ marginTop: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Legend
-        </Typography>
         <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.red.fill, marginRight: 1 }} />
@@ -184,24 +205,17 @@ const ViewBPMN: React.FC = () => {
         </Stack>
       </Box>
 
-      <Box sx={{ marginTop: 4, display: 'flex', justifyContent: 'center' }}>
-        <PieChart width={300} height={300}>
-          <Pie
-            data={data}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            outerRadius={100}
-            label
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-      </Box>
+      <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
+        <Button variant="contained" onClick={handleZoomIn}>
+          Zoom In
+        </Button>
+        <Button variant="contained" onClick={handleZoomOut}>
+          Zoom Out
+        </Button>
+        <Button variant="contained" onClick={handleResetZoom}>
+          Reset View
+        </Button>
+      </Stack>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
         <Button
@@ -217,6 +231,8 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
 
 
 
