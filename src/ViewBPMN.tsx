@@ -221,9 +221,9 @@ const ViewBPMN: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate('/heatmap-aggr')}
+          onClick={() => navigate('/activity-stats')}
         >
-          View Visualizations
+          View Stats
         </Button>
       </Stack>
     </Box>
@@ -231,6 +231,104 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
