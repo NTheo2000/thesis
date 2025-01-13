@@ -1,56 +1,116 @@
 import React from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { useFileContext } from './FileContext';
 
 const ActivityStats: React.FC = () => {
   const navigate = useNavigate();
   const { extractedElements } = useFileContext();
 
-  // Placeholder data for activity stats (use extractedElements when available)
-  const activityStats = extractedElements.map((element: any) => ({
-    name: element.name,
-    skipped: Math.random() * 100, // Replace with actual skipped percentage
-    inserted: Math.random() * 100, // Replace with actual inserted percentage
-  }));
+  // Colors for gradients based on percentage
+  const colors = ['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'];
 
-  // Updated colors for better visibility
-  const skippedColor = "#ff6f61"; // Red-orange for skipped
-  const insertedColor = "#6baed6"; // Light blue for inserted
+  // Helper function to get a color based on value (percentage)
+  const getColorForValue = (value: number) => {
+    const index = Math.min(Math.floor((value / 100) * colors.length), colors.length - 1);
+    return colors[index];
+  };
+
+  // Generate data for activity stats with colors dynamically computed
+  const activityStats = extractedElements.map((element: any) => {
+    const skipped = Math.random() * 100; // Generate random percentages for skipped
+    const inserted = Math.random() * 100; // Generate random percentages for inserted
+    return {
+      name: element.name,
+      skipped,
+      inserted,
+      skippedFill: getColorForValue(skipped), // Precompute color for skipped
+      insertedFill: getColorForValue(inserted), // Precompute color for inserted
+    };
+  });
+
+  const sharedHeight = activityStats.length * 40;
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1200, margin: '0 auto', textAlign: 'center', padding: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Activity Statistics
+        Process Activity Analysis
       </Typography>
 
       <Box
         sx={{
           width: '100%',
           height: 'auto',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          marginTop: 2,
-          overflow: 'hidden',
+          border: '1px solid #e0e0e0',
+          borderRadius: '8px',
+          backgroundColor: '#fafafa',
           padding: 4,
         }}
       >
-        <BarChart
-          width={1000}
-          height={activityStats.length * 80}
-          data={activityStats}
-          layout="vertical"
-          margin={{ top: 20, right: 50, left: 100, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" />
-          <YAxis type="category" dataKey="name" width={200} />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="skipped" fill={skippedColor} name="Skipped Activities" />
-          <Bar dataKey="inserted" fill={insertedColor} name="Inserted Activities" />
-        </BarChart>
+        <Typography variant="h5" gutterBottom>
+          Detailed Activity Insights
+        </Typography>
+        <ul style={{ textAlign: 'left', fontSize: '1rem', maxWidth: 800, margin: '0 auto' }}>
+          <li><strong>Skipped Activities:</strong> Activities that were omitted during the process execution.</li>
+          <li><strong>Inserted Activities:</strong> Additional steps added beyond the original process design.</li>
+        </ul>
+
+        <Box sx={{ display: 'flex', gap: 4, marginTop: 4 }}>
+          {/* Skipped Activities Chart */}
+          <Box>
+            <Typography variant="h6" gutterBottom align="center">
+              Skipped Activities
+            </Typography>
+            <BarChart
+              width={500}
+              height={sharedHeight}
+              data={activityStats.map((stat) => ({
+                ...stat,
+                fill: stat.skippedFill,
+              }))}
+              layout="vertical"
+              margin={{ top: 20, right: 20, left: 50, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
+              <XAxis type="number" tick={{ fontSize: 12 }} />
+              <YAxis type="category" dataKey="name" width={200} tick={{ fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
+                labelStyle={{ fontWeight: 'bold' }}
+                formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
+              />
+              <Bar dataKey="skipped" name="Skipped Activities" />
+            </BarChart>
+          </Box>
+
+          {/* Inserted Activities Chart */}
+          <Box>
+            <Typography variant="h6" gutterBottom align="center">
+              Inserted Activities
+            </Typography>
+            <BarChart
+              width={500}
+              height={sharedHeight}
+              data={activityStats.map((stat) => ({
+                ...stat,
+                fill: stat.insertedFill,
+              }))}
+              layout="vertical"
+              margin={{ top: 20, right: 20, left: 50, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
+              <XAxis type="number" tick={{ fontSize: 12 }} />
+              <YAxis type="category" dataKey="name" width={0} tick={false} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
+                labelStyle={{ fontWeight: 'bold' }}
+                formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
+              />
+              <Bar dataKey="inserted" name="Inserted Activities" />
+            </BarChart>
+          </Box>
+        </Box>
       </Box>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
@@ -66,6 +126,7 @@ const ActivityStats: React.FC = () => {
 };
 
 export default ActivityStats;
+
 
 
 
