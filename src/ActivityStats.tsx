@@ -31,6 +31,8 @@ const ActivityStats: React.FC = () => {
   });
 
   const sharedHeight = activityStats.length * 40;
+  const barAreaWidth = 500; // Shared bar area width for both charts
+  const yAxisWidth = 200; // Space for YAxis labels
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1200, margin: '0 auto', textAlign: 'center', padding: 4 }}>
@@ -56,31 +58,31 @@ const ActivityStats: React.FC = () => {
           <li><strong>Inserted Activities:</strong> Additional steps added beyond the original process design.</li>
         </ul>
 
-        <Box sx={{ display: 'flex', gap: 4, marginTop: 4 }}>
+        <Box sx={{ display: 'flex', gap: 2, marginTop: 4 }}>
           {/* Skipped Activities Chart */}
           <Box>
             <Typography variant="h6" gutterBottom align="center">
               Skipped Activities
             </Typography>
             <BarChart
-              width={500}
+              width={barAreaWidth + yAxisWidth} // Include space for YAxis labels
               height={sharedHeight}
               data={activityStats.map((stat) => ({
                 ...stat,
                 fill: stat.skippedFill,
               }))}
               layout="vertical"
-              margin={{ top: 20, right: 20, left: 50, bottom: 5 }}
+              margin={{ top: 20, right: 20, left: 20, bottom: 5 }} // Adjusted margins for balance
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
               <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" width={200} tick={{ fontSize: 12 }} />
+              <YAxis type="category" dataKey="name" width={yAxisWidth} tick={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
                 labelStyle={{ fontWeight: 'bold' }}
                 formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
               />
-              <Bar dataKey="skipped" name="Skipped Activities" />
+              <Bar dataKey="skipped" name="Percentage of times Skipped" />
             </BarChart>
           </Box>
 
@@ -90,24 +92,24 @@ const ActivityStats: React.FC = () => {
               Inserted Activities
             </Typography>
             <BarChart
-              width={500}
+              width={barAreaWidth} // Only the bar area width, no YAxis labels
               height={sharedHeight}
               data={activityStats.map((stat) => ({
                 ...stat,
                 fill: stat.insertedFill,
               }))}
               layout="vertical"
-              margin={{ top: 20, right: 20, left: 50, bottom: 5 }}
+              margin={{ top: 20, right: 20, left: 20, bottom: 5 }} // Adjusted margins for balance
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
               <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" width={0} tick={false} />
+              <YAxis type="category" dataKey="name" width={0} tick={false} /> {/* No YAxis labels */}
               <Tooltip
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
                 labelStyle={{ fontWeight: 'bold' }}
                 formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
               />
-              <Bar dataKey="inserted" name="Inserted Activities" />
+              <Bar dataKey="inserted" name="Percentage of times Inserted" />
             </BarChart>
           </Box>
         </Box>
@@ -126,6 +128,10 @@ const ActivityStats: React.FC = () => {
 };
 
 export default ActivityStats;
+
+
+
+
 
 
 

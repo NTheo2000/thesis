@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, Stack, TextField, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFileContext } from './FileContext';
@@ -11,11 +11,25 @@ const WelcomePage: React.FC = () => {
   const navigate = useNavigate();
   const { setBpmnFileContent, setCsvFileContent } = useFileContext();
 
+  useEffect(() => {
+    // Automatically load the BPMN file from the public folder
+    const preselectedBpmnPath = 'Model_InternationalDeclarations.bpmn'; // Adjust the path if needed
+    fetch(preselectedBpmnPath)
+      .then((response) => response.text())
+      .then((content) => {
+        const file = new File([content], 'Model_InternationalDeclarations.bpmn', {
+          type: 'application/xml',
+        });
+        setBpmnFile(file); // Set the file state for UI
+        setBpmnFileContent(content); // Set the file content in the context
+      })
+      .catch((error) => console.error('Error loading BPMN file:', error));
+  }, [setBpmnFileContent]);
+
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     setFile: React.Dispatch<React.SetStateAction<File | null>>,
-    setFileContent: (content: string | null) => void,
-    fileType: 'bpmn' | 'csv'
+    setFileContent: (content: string | null) => void
   ) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files[0]) {
@@ -56,7 +70,7 @@ const WelcomePage: React.FC = () => {
           <TextField
             type="file"
             inputProps={{ accept: '.bpmn' }}
-            onChange={(event) => handleFileChange(event, setBpmnFile, setBpmnFileContent, 'bpmn')}
+            onChange={(event) => handleFileChange(event, setBpmnFile, setBpmnFileContent)}
             fullWidth
             variant="outlined"
             helperText={
@@ -64,7 +78,7 @@ const WelcomePage: React.FC = () => {
                 `Selected File: ${bpmnFile.name}`
               ) : (
                 <Typography variant="body2" color="text.secondary">
-                  Please upload a valid `.bpmn` file
+                  A preloaded file "Model_InternationalDeclarations.bpmn" is ready. You can upload another file if needed.
                 </Typography>
               )
             }
@@ -80,7 +94,7 @@ const WelcomePage: React.FC = () => {
           <TextField
             type="file"
             inputProps={{ accept: '.csv' }}
-            onChange={(event) => handleFileChange(event, setCsvFile, setCsvFileContent, 'csv')}
+            onChange={(event) => handleFileChange(event, setCsvFile, setCsvFileContent)}
             fullWidth
             variant="outlined"
             helperText={
@@ -123,6 +137,8 @@ const WelcomePage: React.FC = () => {
 };
 
 export default WelcomePage;
+
+
 
 
 
