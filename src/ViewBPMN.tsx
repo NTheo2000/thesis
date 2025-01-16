@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 const COLORS = {
   red: { stroke: 'red', fill: 'lightpink' },
-  orange: { stroke: 'orange', fill: '#FFD580' }, // Adjusted lighter orange
+  orange: { stroke: 'orange', fill: '#FFD580' },
   green: { stroke: 'green', fill: 'lightgreen' },
 };
 
@@ -22,6 +22,20 @@ const ViewBPMN: React.FC = () => {
     orange: 0,
     green: 0,
   });
+
+  const activityStats = {
+    Activity_16j9p78: { skipped: 5, inserted: 15 },
+    Activity_0h8ae1b: { skipped: 8, inserted: 18 },
+    Activity_1ua672n: { skipped: 3, inserted: 12 },
+    Activity_00kmeo1: { skipped: 6, inserted: 20 },
+    Activity_0ect789: { skipped: 10, inserted: 25 },
+    Activity_1b8fzfh: { skipped: 7, inserted: 14 },
+    Activity_0v8bmmj: { skipped: 4, inserted: 18 },
+    Activity_1vy44rn: { skipped: 2, inserted: 10 },
+    Activity_1s7bzv0: { skipped: 9, inserted: 22 },
+    Activity_12k66qk: { skipped: 6, inserted: 16 },
+    Activity_1drj3wk: { skipped: 8, inserted: 19 },
+  };
 
   const disableHoverEffects = () => {
     if (modelerRef.current) {
@@ -99,6 +113,43 @@ const ViewBPMN: React.FC = () => {
           canvas.zoom('fit-viewport');
           disableHoverEffects();
           applyColors();
+
+          // Add hover listeners for activity boxes
+          const eventBus = modelerRef.current!.get('eventBus') as any;
+          eventBus.on('element.hover', (event: any) => {
+            const element = event.element;
+            if (element.type === 'bpmn:Task') {
+              const statsBox = document.createElement('div');
+              statsBox.className = 'hover-stats-box';
+              statsBox.style.position = 'absolute';
+              statsBox.style.backgroundColor = 'rgba(0,0,0,0.8)';
+              statsBox.style.color = 'white';
+              statsBox.style.padding = '8px';
+              statsBox.style.borderRadius = '4px';
+              statsBox.style.pointerEvents = 'none';
+              statsBox.style.zIndex = '1000';
+
+              const stats = activityStats[element.id as keyof typeof activityStats] || { skipped: 0, inserted: 0 };
+              statsBox.innerHTML = `
+                <div>Percentage of times skipped: ${stats.skipped}%</div>
+                <div>Percentage of times inserted: ${stats.inserted}%</div>
+              `;
+
+              document.body.appendChild(statsBox);
+
+              const onMove = (mouseEvent: MouseEvent) => {
+                statsBox.style.left = `${mouseEvent.pageX + 10}px`;
+                statsBox.style.top = `${mouseEvent.pageY + 10}px`;
+              };
+
+              document.addEventListener('mousemove', onMove);
+
+              eventBus.once('element.out', () => {
+                document.body.removeChild(statsBox);
+                document.removeEventListener('mousemove', onMove);
+              });
+            }
+          });
         })
         .catch((error: unknown) => {
           console.error('Error rendering BPMN diagram:', error);
@@ -143,7 +194,7 @@ const ViewBPMN: React.FC = () => {
       <Box
         ref={bpmnContainerRef}
         sx={{
-          position: 'relative', // Enable absolute positioning within this container
+          position: 'relative',
           width: '100%',
           height: '600px',
           border: '1px solid #ccc',
@@ -160,12 +211,12 @@ const ViewBPMN: React.FC = () => {
             right: 10,
             width: 150,
             height: 150,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '50%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', // Add slight shadow
+            boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
           }}
         >
           <PieChart width={150} height={150}>
@@ -176,7 +227,7 @@ const ViewBPMN: React.FC = () => {
               cx="50%"
               cy="50%"
               outerRadius={70}
-              label={({ value }) => value} // Add numbers as labels
+              label={({ value }) => value}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -185,24 +236,6 @@ const ViewBPMN: React.FC = () => {
             <Tooltip />
           </PieChart>
         </Box>
-      </Box>
-
-      {/* Legend */}
-      <Box sx={{ marginTop: 4 }}>
-        <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.red.fill, marginRight: 1 }} />
-            <Typography>Low Conformance</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.orange.fill, marginRight: 1 }} />
-            <Typography>Medium Conformance</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: 20, height: 20, backgroundColor: COLORS.green.fill, marginRight: 1 }} />
-            <Typography>High Conformance</Typography>
-          </Box>
-        </Stack>
       </Box>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
@@ -231,6 +264,15 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
+
+
+
+
+
+
+
 
 
 
