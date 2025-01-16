@@ -24,17 +24,38 @@ const ViewBPMN: React.FC = () => {
   });
 
   const activityStats = {
-    Activity_16j9p78: { skipped: 5, inserted: 15 },
-    Activity_0h8ae1b: { skipped: 8, inserted: 18 },
-    Activity_1ua672n: { skipped: 3, inserted: 12 },
+    // Red activities
+    Activity_16j9p78: { skipped: 33, inserted: 15 },
+    Activity_0h8ae1b: { skipped: 34, inserted: 68 },
+    Activity_1ua672n: { skipped: 37, inserted: 55 },
     Activity_00kmeo1: { skipped: 6, inserted: 20 },
-    Activity_0ect789: { skipped: 10, inserted: 25 },
-    Activity_1b8fzfh: { skipped: 7, inserted: 14 },
-    Activity_0v8bmmj: { skipped: 4, inserted: 18 },
+    Activity_0ect789: { skipped: 89, inserted: 30 },
+    Activity_1b8fzfh: { skipped: 77, inserted: 60 },
+    Activity_0v8bmmj: { skipped: 40, inserted: 18 },
     Activity_1vy44rn: { skipped: 2, inserted: 10 },
-    Activity_1s7bzv0: { skipped: 9, inserted: 22 },
-    Activity_12k66qk: { skipped: 6, inserted: 16 },
-    Activity_1drj3wk: { skipped: 8, inserted: 19 },
+    Activity_1s7bzv0: { skipped: 90, inserted: 62 },
+    Activity_12k66qk: { skipped: 60, inserted: 80 },
+    Activity_1drj3wk: { skipped: 58, inserted: 69 },
+
+    // Orange activities
+    Activity_0y75frc: { skipped: 47, inserted: 12 },
+    Activity_17dszm4: { skipped: 70, inserted: 78 },
+    Activity_0y9in93: { skipped: 55, inserted: 15 },
+    Activity_14fjgjx: { skipped: 60, inserted: 18 },
+    Activity_0bi3xvb: { skipped: 30, inserted: 50 },
+    Activity_1ttad5g: { skipped: 85, inserted: 42 },
+
+    // Green activities
+    Activity_0h5rfru: { skipped: 1, inserted: 5 },
+    Activity_0vwot0o: { skipped: 55, inserted: 80 },
+    Activity_16cyojo: { skipped: 11, inserted: 70 },
+    Activity_0dkgijr: { skipped: 23, inserted: 63 },
+    Activity_1i0g780: { skipped: 34, inserted: 95 },
+    Activity_1pkrvgt: { skipped: 23, inserted: 54 },
+    Activity_077hrrh: { skipped: 13, inserted: 64 },
+    Activity_1e3872g: { skipped: 24, inserted: 74 },
+    Activity_1q0ivgg: { skipped: 15, inserted: 53 },
+    Activity_03fzalw: { skipped: 33, inserted: 84 },
   };
 
   const disableHoverEffects = () => {
@@ -278,7 +299,6 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
-
 
 
 
