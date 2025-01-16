@@ -128,11 +128,25 @@ const ViewBPMN: React.FC = () => {
               statsBox.style.borderRadius = '4px';
               statsBox.style.pointerEvents = 'none';
               statsBox.style.zIndex = '1000';
+              statsBox.style.width = '200px';
 
               const stats = activityStats[element.id as keyof typeof activityStats] || { skipped: 0, inserted: 0 };
               statsBox.innerHTML = `
-                <div>Percentage of times skipped: ${stats.skipped}%</div>
-                <div>Percentage of times inserted: ${stats.inserted}%</div>
+                <div style="margin-bottom: 8px; text-align: center; font-weight: bold;">Activity Stats</div>
+                <div style="display: flex; align-items: center;">
+                  <div style="width: 70px;">Skipped:</div>
+                  <div style="flex: 1; background-color: lightcoral; height: 8px; margin-right: 8px;">
+                    <div style="width: ${stats.skipped}%; background-color: red; height: 100%;"></div>
+                  </div>
+                  <div>${stats.skipped}%</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-top: 4px;">
+                  <div style="width: 70px;">Inserted:</div>
+                  <div style="flex: 1; background-color: lightgreen; height: 8px; margin-right: 8px;">
+                    <div style="width: ${stats.inserted}%; background-color: green; height: 100%;"></div>
+                  </div>
+                  <div>${stats.inserted}%</div>
+                </div>
               `;
 
               document.body.appendChild(statsBox);
@@ -264,6 +278,7 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
 
 
 
