@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, TextField, Button, MenuItem, Select } from '@mui/material';
+import { Slider, Box, Typography, TextField, Select, MenuItem, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -28,10 +26,10 @@ const initialLineChartData = [
 
 const ViolationGuidelines: React.FC = () => {
     const [conformance, setConformance] = useState<number>(0);
-    const [selectedChart, setSelectedChart] = useState<string>('Case Amount'); // Default to "Case Amount"
+    const [selectedChart, setSelectedChart] = useState<string>('Case Amount');
     const [resourceInput, setResourceInput] = useState<string>('');
     const [selectedResources, setSelectedResources] = useState<number[]>([]);
-    const [filteredLineData, setFilteredLineData] = useState(initialLineChartData); // Start with line chart data
+    const [filteredLineData, setFilteredLineData] = useState(initialLineChartData);
     const chartRef = useRef<any>(null);
     const navigate = useNavigate();
 
@@ -59,7 +57,7 @@ const ViolationGuidelines: React.FC = () => {
         setConformance(0);
 
         if (chartType === 'Case Amount') {
-            setFilteredLineData(initialLineChartData); // Reset line chart data for case amount
+            setFilteredLineData(initialLineChartData);
         }
     };
 
@@ -78,7 +76,7 @@ const ViolationGuidelines: React.FC = () => {
         setConformance(0);
         setResourceInput('');
         setSelectedResources([]);
-        setFilteredLineData(initialLineChartData); // Reset line chart data
+        setFilteredLineData(initialLineChartData);
         if (chartRef.current) {
             chartRef.current.resetZoom();
         }
@@ -181,7 +179,7 @@ const ViolationGuidelines: React.FC = () => {
     };
 
     return (
-        <Box sx={{ width: 800, height: 900, margin: '0 auto' }}>
+        <Box sx={{ width: 800, height: 900, margin: '0 auto', position: 'relative' }}>
             <Typography variant="h5" gutterBottom align="center">
                 Violation Guidelines: Conformance vs Attributes
             </Typography>
@@ -207,10 +205,6 @@ const ViolationGuidelines: React.FC = () => {
                 Current Conformance: {conformance.toFixed(2)}
             </Typography>
 
-            <Button variant="contained" color="primary" onClick={handleReset} sx={{ marginBottom: 2, display: 'block' }}>
-                Reset
-            </Button>
-
             <Select value={selectedChart} onChange={handleChartChange} sx={{ marginBottom: 2 }}>
                 <MenuItem value="Resource">Resource</MenuItem>
                 <MenuItem value="Case Amount">Case Amount</MenuItem>
@@ -235,30 +229,51 @@ const ViolationGuidelines: React.FC = () => {
                 )}
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate('/heatmap-aggr')}
-                >
-                    Conformance Distribution
-                </Button>
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    endIcon={<ArrowForwardIcon />}
-                    onClick={() => navigate('/conformance-outcome')}
-                >
-                    Conformance Outcome
-                </Button>
-            </Box>
+            {/* Navigation Buttons */}
+            <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '20px',
+                    fontSize: '1.5rem',
+                    minWidth: '50px',
+                    height: '50px',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                onClick={() => navigate('/heatmap-aggr')}
+            >
+                ←
+            </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    right: '20px',
+                    fontSize: '1.5rem',
+                    minWidth: '50px',
+                    height: '50px',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                onClick={() => navigate('/conformance-outcome')}
+            >
+                →
+            </Button>
         </Box>
     );
 };
 
 export default ViolationGuidelines;
+
 
 
 

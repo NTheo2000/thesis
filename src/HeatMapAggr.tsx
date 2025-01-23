@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, TextField, IconButton, Button } from '@mui/material';
+import { Slider, Box, Typography, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -11,7 +9,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
 
 interface Bin {
-  traces: { trace: string, conformance: number }[];
+  traces: { trace: string; conformance: number }[];
   averageConformance: number;
   traceCount: number;
 }
@@ -22,13 +20,15 @@ const getColorForConformance = (conformance: number): string => {
   return colors[index];
 };
 
-const aggregateTraces = (traces: { trace: string, conformance: number }[], numBins: number = 10): Bin[] => {
+const aggregateTraces = (traces: { trace: string; conformance: number }[], numBins: number = 10): Bin[] => {
   const binSize = 1 / numBins;
-  const bins: Bin[] = Array(numBins).fill(null).map(() => ({
-    traces: [] as { trace: string, conformance: number }[],
-    averageConformance: 0,
-    traceCount: 0,
-  }));
+  const bins: Bin[] = Array(numBins)
+    .fill(null)
+    .map(() => ({
+      traces: [] as { trace: string; conformance: number }[],
+      averageConformance: 0,
+      traceCount: 0,
+    }));
 
   traces.forEach(({ trace, conformance }) => {
     const binIndex = Math.min(Math.floor(conformance / binSize), numBins - 1);
@@ -37,7 +37,7 @@ const aggregateTraces = (traces: { trace: string, conformance: number }[], numBi
     bins[binIndex].traceCount += 1;
   });
 
-  bins.forEach(bin => {
+  bins.forEach((bin) => {
     if (bin.traceCount > 0) {
       bin.averageConformance /= bin.traceCount;
     }
@@ -86,7 +86,7 @@ const HeatMapAggr: React.FC = () => {
 
   const filteredData = traces
     .map((trace, index) => ({ trace, conformance: conformanceValues[index] }))
-    .filter(item => item.conformance >= conformance);
+    .filter((item) => item.conformance >= conformance);
 
   let data;
   let chartOptions;
@@ -228,7 +228,7 @@ const HeatMapAggr: React.FC = () => {
   }
 
   return (
-    <Box sx={{ width: 800, height: 900, margin: '0 auto' }}>
+    <Box sx={{ width: 800, height: 900, margin: '0 auto', position: 'relative' }}>
       <Typography variant="h5" gutterBottom align="center">
         Conformance Distribution
       </Typography>
@@ -270,30 +270,50 @@ const HeatMapAggr: React.FC = () => {
       </Box>
 
       {/* Navigation Buttons */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate('/view-bpmn')}
-        >
-          View BPMN
-        </Button>
-
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => navigate('/violation-guidelines')}
-        >
-          Violation Guidelines
-        </Button>
-      </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '20px',
+          fontSize: '1.5rem',
+          minWidth: '50px',
+          height: '50px',
+          fontWeight: 'bold',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onClick={() => navigate('/activity-stats')}
+      >
+        ←
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          fontSize: '1.5rem',
+          minWidth: '50px',
+          height: '50px',
+          fontWeight: 'bold',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onClick={() => navigate('/violation-guidelines')}
+      >
+        →
+      </Button>
     </Box>
   );
 };
 
 export default HeatMapAggr;
+
 
 
 

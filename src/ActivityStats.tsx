@@ -8,31 +8,28 @@ const ActivityStats: React.FC = () => {
   const navigate = useNavigate();
   const { extractedElements } = useFileContext();
 
-  // Colors for gradients based on percentage
   const colors = ['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'];
 
-  // Helper function to get a color based on value (percentage)
   const getColorForValue = (value: number) => {
     const index = Math.min(Math.floor((value / 100) * colors.length), colors.length - 1);
     return colors[index];
   };
 
-  // Generate data for activity stats with colors dynamically computed
   const activityStats = extractedElements.map((element: any) => {
-    const skipped = Math.random() * 100; // Generate random percentages for skipped
-    const inserted = Math.random() * 100; // Generate random percentages for inserted
+    const skipped = Math.random() * 100;
+    const inserted = Math.random() * 100;
     return {
       name: element.name,
       skipped,
       inserted,
-      skippedFill: getColorForValue(skipped), // Precompute color for skipped
-      insertedFill: getColorForValue(inserted), // Precompute color for inserted
+      skippedFill: getColorForValue(skipped),
+      insertedFill: getColorForValue(inserted),
     };
   });
 
   const sharedHeight = activityStats.length * 40;
-  const barAreaWidth = 500; // Shared bar area width for both charts
-  const yAxisWidth = 200; // Space for YAxis labels
+  const barAreaWidth = 500;
+  const yAxisWidth = 200;
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1200, margin: '0 auto', textAlign: 'center', padding: 4 }}>
@@ -59,20 +56,19 @@ const ActivityStats: React.FC = () => {
         </ul>
 
         <Box sx={{ display: 'flex', gap: 2, marginTop: 4 }}>
-          {/* Skipped Activities Chart */}
           <Box>
             <Typography variant="h6" gutterBottom align="center">
               Skipped Activities
             </Typography>
             <BarChart
-              width={barAreaWidth + yAxisWidth} // Include space for YAxis labels
+              width={barAreaWidth + yAxisWidth}
               height={sharedHeight}
               data={activityStats.map((stat) => ({
                 ...stat,
                 fill: stat.skippedFill,
               }))}
               layout="vertical"
-              margin={{ top: 20, right: 20, left: 20, bottom: 5 }} // Adjusted margins for balance
+              margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
               <XAxis type="number" tick={{ fontSize: 12 }} />
@@ -86,24 +82,23 @@ const ActivityStats: React.FC = () => {
             </BarChart>
           </Box>
 
-          {/* Inserted Activities Chart */}
           <Box>
             <Typography variant="h6" gutterBottom align="center">
               Inserted Activities
             </Typography>
             <BarChart
-              width={barAreaWidth} // Only the bar area width, no YAxis labels
+              width={barAreaWidth}
               height={sharedHeight}
               data={activityStats.map((stat) => ({
                 ...stat,
                 fill: stat.insertedFill,
               }))}
               layout="vertical"
-              margin={{ top: 20, right: 20, left: 20, bottom: 5 }} // Adjusted margins for balance
+              margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
               <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" width={0} tick={false} /> {/* No YAxis labels */}
+              <YAxis type="category" dataKey="name" width={0} tick={false} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
                 labelStyle={{ fontWeight: 'bold' }}
@@ -115,12 +110,22 @@ const ActivityStats: React.FC = () => {
         </Box>
       </Box>
 
-      <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
-        <Button variant="contained" onClick={() => navigate('/view-bpmn')}>
-          Back to BPMN Viewer
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ marginTop: 4, width: '100%' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginLeft: 2, fontSize: '1.5rem', fontWeight: 'bold' }}
+          onClick={() => navigate('/view-bpmn')}
+        >
+          ←
         </Button>
-        <Button variant="contained" color="primary" onClick={() => navigate('/heatmap-aggr')}>
-          View Visualizations
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginRight: 2, fontSize: '1.5rem', fontWeight: 'bold' }}
+          onClick={() => navigate('/heatmap-aggr')}
+        >
+          →
         </Button>
       </Stack>
     </Box>
@@ -128,6 +133,9 @@ const ActivityStats: React.FC = () => {
 };
 
 export default ActivityStats;
+
+
+
 
 
 

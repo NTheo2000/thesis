@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Slider, Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import { Bubble } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -137,7 +135,7 @@ const ConformanceOutcomeChart: React.FC = () => {
   const chartData = prepareChartData(filteredData);
 
   return (
-    <Box sx={{ width: 800, height: 600, margin: '0 auto' }}>
+    <Box sx={{ width: 800, height: 600, margin: '0 auto', position: 'relative' }}>
       <Typography variant="h5" gutterBottom align="center">
         Bubble Chart: Conformance vs Percentage Ending with "A_finalized"
       </Typography>
@@ -175,26 +173,45 @@ const ConformanceOutcomeChart: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          startIcon={<ArrowBackIcon />}
+          sx={{
+            fontSize: '1.5rem',
+            minWidth: '50px',
+            height: '50px',
+            fontWeight: 'bold',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
           onClick={() => navigate('/violation-guidelines')}
         >
-          Violation Guidelines
+          ←
         </Button>
-        
+
         <Button
           variant="contained"
           color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => navigate('/heatmap-aggr')}
+          sx={{
+            fontSize: '1.5rem',
+            minWidth: '50px',
+            height: '50px',
+            fontWeight: 'bold',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onClick={() => navigate('/')}
         >
-          Conformance Distribution
+          →
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default ConformanceOutcomeChart; 
+export default ConformanceOutcomeChart;
+
+
+
 
 
 

@@ -135,7 +135,6 @@ const ViewBPMN: React.FC = () => {
           disableHoverEffects();
           applyColors();
 
-          // Add hover listeners for activity boxes
           const eventBus = modelerRef.current!.get('eventBus') as any;
           eventBus.on('element.hover', (event: any) => {
             const element = event.element;
@@ -143,8 +142,8 @@ const ViewBPMN: React.FC = () => {
               const statsBox = document.createElement('div');
               statsBox.className = 'hover-stats-box';
               statsBox.style.position = 'absolute';
-              statsBox.style.backgroundColor = 'rgba(0,0,0,0.8)';
-              statsBox.style.color = 'white';
+              statsBox.style.backgroundColor = 'rgba(255,255,255,0.95)';
+              statsBox.style.color = '#1565c0';
               statsBox.style.padding = '8px';
               statsBox.style.borderRadius = '4px';
               statsBox.style.pointerEvents = 'none';
@@ -153,18 +152,18 @@ const ViewBPMN: React.FC = () => {
 
               const stats = activityStats[element.id as keyof typeof activityStats] || { skipped: 0, inserted: 0 };
               statsBox.innerHTML = `
-                <div style="margin-bottom: 8px; text-align: center; font-weight: bold;">Activity Stats</div>
+                <div style="margin-bottom: 8px; text-align: center; font-weight: bold; color: white; background-color: #1565c0; padding: 4px; border-radius: 4px;">Activity Stats</div>
                 <div style="display: flex; align-items: center;">
                   <div style="width: 70px;">Skipped:</div>
-                  <div style="flex: 1; background-color: lightcoral; height: 8px; margin-right: 8px;">
-                    <div style="width: ${stats.skipped}%; background-color: red; height: 100%;"></div>
+                  <div style="flex: 1; background-color: lightgray; height: 8px; margin-right: 8px;">
+                    <div style="width: ${stats.skipped}%; background-color: #1565c0; height: 100%;"></div>
                   </div>
                   <div>${stats.skipped}%</div>
                 </div>
                 <div style="display: flex; align-items: center; margin-top: 4px;">
                   <div style="width: 70px;">Inserted:</div>
-                  <div style="flex: 1; background-color: lightgreen; height: 8px; margin-right: 8px;">
-                    <div style="width: ${stats.inserted}%; background-color: green; height: 100%;"></div>
+                  <div style="flex: 1; background-color: lightgray; height: 8px; margin-right: 8px;">
+                    <div style="width: ${stats.inserted}%; background-color: #1565c0; height: 100%;"></div>
                   </div>
                   <div>${stats.inserted}%</div>
                 </div>
@@ -285,13 +284,22 @@ const ViewBPMN: React.FC = () => {
         </Button>
       </Stack>
 
-      <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 4 }}>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ marginTop: 4, width: '100%' }}>
         <Button
           variant="contained"
           color="primary"
+          sx={{ marginLeft: 2, fontSize: '1.5rem', fontWeight: 'bold' }}
+          onClick={() => navigate('/')}
+        >
+          ←
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginRight: 2, fontSize: '1.5rem', fontWeight: 'bold' }}
           onClick={() => navigate('/activity-stats')}
         >
-          View Stats
+          →
         </Button>
       </Stack>
     </Box>
@@ -299,6 +307,10 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
+
+
 
 
 
