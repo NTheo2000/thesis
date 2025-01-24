@@ -53,7 +53,7 @@ const WelcomePage: React.FC = () => {
   return (
     <Box sx={{ width: '100%', maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: 4 }}>
       {/* Page Title */}
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+      <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
         Welcome to the Conformance Analysis App
       </Typography>
       <Typography variant="body1" gutterBottom sx={{ marginBottom: 3 }}>
