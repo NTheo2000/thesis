@@ -152,20 +152,20 @@ const ViewBPMN: React.FC = () => {
 
               const stats = activityStats[element.id as keyof typeof activityStats] || { skipped: 0, inserted: 0 };
               statsBox.innerHTML = `
-                <div style="margin-bottom: 8px; text-align: center; font-weight: bold; color: white; background-color: #1565c0; padding: 4px; border-radius: 4px;">Activity Stats</div>
+                <div style="margin-bottom: 8px; text-align: center; font-weight: bold; color: white; background-color: black; padding: 4px; border-radius: 4px;">Activity Stats</div>
                 <div style="display: flex; align-items: center;">
-                  <div style="width: 70px;">Skipped:</div>
+                  <div style="width: 70px; color: black;">Skipped:</div>
                   <div style="flex: 1; background-color: lightgray; height: 8px; margin-right: 8px;">
-                    <div style="width: ${stats.skipped}%; background-color: #1565c0; height: 100%;"></div>
+                    <div style="width: ${stats.skipped}%; background-color: purple; height: 100%;"></div>
                   </div>
-                  <div>${stats.skipped}%</div>
+                  <div style="color: black;">${stats.skipped}%</div>
                 </div>
                 <div style="display: flex; align-items: center; margin-top: 4px;">
-                  <div style="width: 70px;">Inserted:</div>
+                  <div style="width: 70px; color: black;">Inserted:</div>
                   <div style="flex: 1; background-color: lightgray; height: 8px; margin-right: 8px;">
-                    <div style="width: ${stats.inserted}%; background-color: #1565c0; height: 100%;"></div>
+                    <div style="width: ${stats.inserted}%; background-color: yellow; height: 100%;"></div>
                   </div>
-                  <div>${stats.inserted}%</div>
+                  <div style="color: black;">${stats.inserted}%</div>
                 </div>
               `;
 
@@ -307,6 +307,8 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
+
+
 
           
 
