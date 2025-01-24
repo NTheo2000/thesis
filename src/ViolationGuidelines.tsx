@@ -205,10 +205,33 @@ const ViolationGuidelines: React.FC = () => {
                 Current Conformance: {conformance.toFixed(2)}
             </Typography>
 
-            <Select value={selectedChart} onChange={handleChartChange} sx={{ marginBottom: 2 }}>
-                <MenuItem value="Resource">Resource</MenuItem>
-                <MenuItem value="Case Amount">Case Amount</MenuItem>
-            </Select>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 1.5,
+                    marginTop: 1,
+                }}
+            >
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleReset}
+                    sx={{ marginBottom: 2 }}
+                >
+                    Reset
+                </Button>
+
+                <Select
+                    value={selectedChart}
+                    onChange={handleChartChange}
+                    sx={{ width: '150px', fontSize: '0.9rem', marginBottom: 2 }}
+                >
+                    <MenuItem value="Resource">Resource</MenuItem>
+                    <MenuItem value="Case Amount">Case Amount</MenuItem>
+                </Select>
+            </Box>
 
             {selectedChart === 'Resource' && (
                 <TextField
@@ -217,7 +240,7 @@ const ViolationGuidelines: React.FC = () => {
                     value={resourceInput}
                     onChange={handleResourceInput}
                     placeholder="Enter Resource Numbers (comma-separated, max 70)"
-                    sx={{ marginBottom: 2 }}
+                    sx={{ marginTop: 2 }}
                 />
             )}
 
@@ -229,50 +252,55 @@ const ViolationGuidelines: React.FC = () => {
                 )}
             </Box>
 
-            {/* Navigation Buttons */}
-            <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    left: '20px',
-                    fontSize: '1.5rem',
-                    minWidth: '50px',
-                    height: '50px',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                onClick={() => navigate('/heatmap-aggr')}
-            >
-                ←
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    right: '20px',
-                    fontSize: '1.5rem',
-                    minWidth: '50px',
-                    height: '50px',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                onClick={() => navigate('/conformance-outcome')}
-            >
-                →
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/heatmap-aggr')}
+                    sx={{
+                        fontSize: '1.5rem',
+                        minWidth: '50px',
+                        height: '50px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    ←
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/conformance-outcome')}
+                    sx={{
+                        fontSize: '1.5rem',
+                        minWidth: '50px',
+                        height: '50px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    →
+                </Button>
+            </Box>
         </Box>
     );
 };
 
 export default ViolationGuidelines;
+
+
+
+
+
+
+
+
+
+
 
 
 

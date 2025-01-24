@@ -51,7 +51,7 @@ const ActivityStats: React.FC = () => {
           padding: '16px 0', // Adjusted padding for better alignment
         }}
       >
-        Process Activity Analysis
+        Activity Deviations
       </Typography>
 
       <Box
@@ -68,7 +68,7 @@ const ActivityStats: React.FC = () => {
           gutterBottom
           sx={{ textAlign: 'center', margin: '16px 0' }}
         >
-          Combined Skipped and Inserted Activities
+          Percentage of times skipped and inserted
         </Typography>
 
         <BarChart

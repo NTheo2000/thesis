@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import { Bubble } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import CachedIcon from '@mui/icons-material/Cached';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, Tooltip, Legend, zoomPlugin);
 
@@ -188,21 +189,23 @@ const ConformanceOutcomeChart: React.FC = () => {
         </Button>
 
         <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            fontSize: '1.5rem',
-            minWidth: '50px',
-            height: '50px',
-            fontWeight: 'bold',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onClick={() => navigate('/')}
-        >
-          →
-        </Button>
+  variant="contained"
+  color="primary"
+  sx={{
+    fontSize: '1.5rem',
+    minWidth: '50px',
+    height: '50px',
+    fontWeight: 'bold',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '8px', // Rectangular with rounded edges (similar to the other button)
+  }}
+  onClick={() => navigate('/')} // Navigate to the starting page
+>
+  <CachedIcon sx={{ fontSize: '1.5rem' }} /> {/* Use the CachedIcon */}
+</Button>
+ 
       </Box>
     </Box>
   );

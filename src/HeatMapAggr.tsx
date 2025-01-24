@@ -252,6 +252,9 @@ const HeatMapAggr: React.FC = () => {
       <Typography variant="body1" gutterBottom>
         Current Conformance: {conformance.toFixed(2)}
       </Typography>
+      <Button variant="contained" color="primary" onClick={handleResetSelection} sx={{ marginBottom: 2 }}>
+        Reset
+      </Button>
 
       <Typography variant="h6" gutterBottom>
         Enter Trace Numbers to Compare (comma-separated)
@@ -269,7 +272,6 @@ const HeatMapAggr: React.FC = () => {
         <Bar ref={chartRef} data={data} options={chartOptions} />
       </Box>
 
-      {/* Navigation Buttons */}
       <Button
         variant="contained"
         color="primary"
@@ -313,6 +315,7 @@ const HeatMapAggr: React.FC = () => {
 };
 
 export default HeatMapAggr;
+
 
 
 
