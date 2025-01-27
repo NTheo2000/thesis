@@ -1,18 +1,8 @@
 import React from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, Legend } from 'recharts';
 import { useFileContext } from './FileContext';
-
-const colors = [
-  '#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
-  '#ef3b2c', '#cb181d', '#a50f15', '#67000d',
-];
-
-const getColorForValue = (value: number) => {
-  const index = Math.min(Math.floor((value / 100) * colors.length), colors.length - 1);
-  return colors[index];
-};
 
 const ActivityStats: React.FC = () => {
   const navigate = useNavigate();
@@ -25,8 +15,6 @@ const ActivityStats: React.FC = () => {
       name: element.name,
       skipped,
       inserted,
-      skippedFill: getColorForValue(skipped),
-      insertedFill: getColorForValue(inserted),
     };
   });
 
@@ -38,7 +26,7 @@ const ActivityStats: React.FC = () => {
         width: '100%',
         maxWidth: 900,
         margin: '0 auto',
-        backgroundColor: '#ffffff', // White background to remove grey areas
+        backgroundColor: '#ffffff',
         borderRadius: '8px',
       }}
     >
@@ -48,7 +36,7 @@ const ActivityStats: React.FC = () => {
         sx={{
           textAlign: 'center',
           margin: '0',
-          padding: '16px 0', // Adjusted padding for better alignment
+          padding: '16px 0',
         }}
       >
         Activity Deviations
@@ -86,14 +74,19 @@ const ActivityStats: React.FC = () => {
             labelStyle={{ fontWeight: 'bold' }}
             formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
           />
-          <Bar dataKey="skipped" name="Skipped">
+          <Legend
+            verticalAlign="top"
+            align="center"
+            wrapperStyle={{ paddingBottom: 20 }}
+          />
+          <Bar dataKey="skipped" name="Skipped" fill="purple">
             {activityStats.map((entry, index) => (
-              <Cell key={`cell-skipped-${index}`} fill={entry.skippedFill} />
+              <Cell key={`cell-skipped-${index}`} fill="purple" />
             ))}
           </Bar>
-          <Bar dataKey="inserted" name="Inserted">
+          <Bar dataKey="inserted" name="Inserted" fill="#f9a825">
             {activityStats.map((entry, index) => (
-              <Cell key={`cell-inserted-${index}`} fill={entry.insertedFill} />
+              <Cell key={`cell-inserted-${index}`} fill="#f9a825" />
             ))}
           </Bar>
         </BarChart>
@@ -104,7 +97,7 @@ const ActivityStats: React.FC = () => {
         spacing={2}
         justifyContent="space-between"
         sx={{
-          marginTop: 4, // Added extra space below the container
+          marginTop: 4,
           padding: 0,
           position: 'relative',
         }}
@@ -117,7 +110,7 @@ const ActivityStats: React.FC = () => {
             fontSize: '1.5rem',
             fontWeight: 'bold',
             backgroundColor: '#1565c0',
-            marginTop: '24px', // Move buttons further down
+            marginTop: '24px',
           }}
           onClick={() => navigate('/view-bpmn')}
         >
@@ -131,7 +124,7 @@ const ActivityStats: React.FC = () => {
             fontSize: '1.5rem',
             fontWeight: 'bold',
             backgroundColor: '#1565c0',
-            marginTop: '24px', // Move buttons further down
+            marginTop: '24px',
           }}
           onClick={() => navigate('/heatmap-aggr')}
         >
@@ -143,6 +136,7 @@ const ActivityStats: React.FC = () => {
 };
 
 export default ActivityStats;
+
 
 
 
