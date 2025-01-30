@@ -34,7 +34,7 @@ const generateRandomConformanceDistribution = () => {
 const ConformanceOutcomeChart: React.FC = () => {
   const [conformance, setConformance] = useState<number>(0);
   const [conformanceDistribution, setConformanceDistribution] = useState(generateRandomConformanceDistribution);
-  const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<string | null>('Payment Handled');
   const chartRef = useRef<any>(null);
   const navigate = useNavigate();
   const { extractedElements } = useFileContext();
@@ -104,11 +104,14 @@ const ConformanceOutcomeChart: React.FC = () => {
       y: {
         title: {
           display: true,
-          text: 'Percentage of Traces Ending with A_finalized',
+          text: selectedActivity
+            ? `Percentage of Traces Ending with ${selectedActivity}`
+            : 'Percentage of Traces Ending with Payment Handled', // Default
         },
         min: 0,
-        max: 100, // Ensures proper scaling
+        max: 100,
       },
+      
     },
     plugins: {
       zoom: {
@@ -122,10 +125,11 @@ const ConformanceOutcomeChart: React.FC = () => {
         callbacks: {
           label: function (tooltipItem: any) {
             const dataItem = tooltipItem.raw;
-            return `Conformance: ${dataItem.x.toFixed(2)}, ${dataItem.y.toFixed(2)}% ended with "A_finalized", ${Math.round(dataItem.count)} traces`;
+            return `Conformance: ${dataItem.x.toFixed(2)}, ${dataItem.y.toFixed(2)}% ended with "${selectedActivity || 'Payment Handled'}", ${Math.round(dataItem.count)} traces`;
           },
         },
       },
+      
     },
     maintainAspectRatio: false,
   };
