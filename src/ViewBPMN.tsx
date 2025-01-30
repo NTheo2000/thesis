@@ -253,39 +253,34 @@ const ViewBPMN: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Pie Chart Positioned in Bottom-Right Corner */}
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 10,
-            right: 10,
-            width: 150,
-            height: 150,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '50%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <PieChart width={150} height={150}>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={70}
-              label={({ value }) => value}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          
-          </PieChart>
-        </Box>
+{/* Gradient Scale Bar */}
+<Box
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '10px 0',
+    marginTop: 2,
+  }}
+>
+  <Typography variant="body2" sx={{ marginRight: 2, fontWeight: 'bold' }}>
+    Low Conformance
+  </Typography>
+  <Box
+    sx={{
+      width: '300px',
+      height: '15px',
+      background: `linear-gradient(to right, ${gradientColors.join(', ')})`,
+      borderRadius: '4px',
+      border: '1px solid #ccc',
+    }}
+  />
+  <Typography variant="body2" sx={{ marginLeft: 2, fontWeight: 'bold' }}>
+    High Conformance
+  </Typography>
+</Box>
+
       </Box>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
