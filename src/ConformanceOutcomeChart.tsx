@@ -10,10 +10,7 @@ import InfoIcon from '@mui/icons-material/Info';
 ChartJS.register(CategoryScale, LinearScale, PointElement, ChartTooltip, Legend, zoomPlugin);
 
 const getColorForValue = (value: number): string => {
-  const colors = [
-    '#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
-    '#ef3b2c', '#cb181d', '#a50f15', '#67000d'
-  ];
+  const colors = ['#67000d', '#a50f15', '#cb181d', '#ef3b2c', '#fb6a4a', '#fc9272', '#fcbba1', '#fee0d2', '#fff5f0'];
   const index = Math.min(Math.floor(value * colors.length), colors.length - 1);
   return colors[index];
 };
