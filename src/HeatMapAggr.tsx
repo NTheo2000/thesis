@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, TextField, Button } from '@mui/material';
+import { Slider, Box, Typography, TextField, Button, Tooltip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import InfoIcon from '@mui/icons-material/Info';
 
 // Register necessary components for Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ChartTooltip, Legend, zoomPlugin);
 
 interface Bin {
   traces: { trace: string; conformance: number }[];
@@ -229,9 +230,16 @@ const HeatMapAggr: React.FC = () => {
 
   return (
     <Box sx={{ width: 800, height: 900, margin: '0 auto', position: 'relative' }}>
-      <Typography variant="h5" gutterBottom align="center">
-        Conformance Distribution
-      </Typography>
+      <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+        <Typography variant="h5" gutterBottom align="center">
+          Conformance Distribution
+        </Typography>
+        <Tooltip title="How does the overall degree of conformance with a set of guidelines differ between multiple logs or traces? To answer this, we first need to derive the process conformance for these entities. At the log level, this provides a more generic overview between different process executions. At the trace level, this is specific to the execution patterns found in the trace." arrow>
+          <IconButton>
+            <InfoIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <Typography variant="h6" gutterBottom>
         Conformance Threshold
       </Typography>

@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, TextField, Select, MenuItem, Button } from '@mui/material';
+import { Slider, Box, Typography, TextField, Select, MenuItem, Button, Tooltip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import InfoIcon from '@mui/icons-material/Info';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend, zoomPlugin);
-
+ChartJS.register(CategoryScale, LinearScale, LineElement, BarElement, Title, ChartTooltip, Legend, zoomPlugin);
 const resources = Array.from({ length: 70 }, (_, i) => `Resource ${i + 1}`);
 const conformanceValues = Array.from({ length: 70 }, () => Math.random());
 
@@ -180,9 +180,16 @@ const ViolationGuidelines: React.FC = () => {
 
     return (
         <Box sx={{ width: 800, height: 900, margin: '0 auto', position: 'relative' }}>
-            <Typography variant="h5" gutterBottom align="center">
-                Violation Guidelines: Conformance vs Attributes
-            </Typography>
+            <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                <Typography variant="h5" gutterBottom align="center">
+                    Violation Guidelines: Conformance vs Attributes
+                </Typography>
+                <Tooltip title="What control-flow, data, resource, or time attributes of events, traces, or logs lead to guideline violations?" arrow>
+                    <IconButton>
+                        <InfoIcon color="primary" />
+                    </IconButton>
+                </Tooltip>
+            </Box>
 
             <Typography variant="h6" gutterBottom>
                 Conformance Threshold

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Typography, Button, Stack } from '@mui/material';
+import { Box, Typography, Button, Stack, Tooltip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Cell, Legend } from 'recharts';
 import { useFileContext } from './FileContext';
+import InfoIcon from '@mui/icons-material/Info';
 
 const ActivityStats: React.FC = () => {
   const navigate = useNavigate();
@@ -30,17 +31,16 @@ const ActivityStats: React.FC = () => {
         borderRadius: '8px',
       }}
     >
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{
-          textAlign: 'center',
-          margin: '0',
-          padding: '16px 0',
-        }}
-      >
-        Activity Deviations
-      </Typography>
+      <Stack direction="row" justifyContent="center" alignItems="center" spacing={1}>
+        <Typography variant="h4" gutterBottom>
+          Activity Deviations
+        </Typography>
+        <Tooltip title="Where exactly does the process execution differ from the guideline? How does alternative behavior look like? This can relate to different control-flow relations, but also resource and data constraints. It can be explored on an event, trace, and log level. The task is similar 'Describe-Identify-Guideline Violation', but here the violation is not presented but needs to be explored by the analyst." arrow>
+          <IconButton>
+            <InfoIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
 
       <Box
         sx={{
@@ -51,11 +51,7 @@ const ActivityStats: React.FC = () => {
           backgroundColor: '#ffffff',
         }}
       >
-        <Typography
-          variant="h5"
-          gutterBottom
-          sx={{ textAlign: 'center', margin: '16px 0' }}
-        >
+        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', margin: '16px 0' }}>
           Percentage of times skipped and inserted
         </Typography>
 
@@ -69,16 +65,12 @@ const ActivityStats: React.FC = () => {
           <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
           <XAxis type="number" tick={{ fontSize: 12 }} />
           <YAxis type="category" dataKey="name" width={200} tick={{ fontSize: 12 }} />
-          <Tooltip
+          <RechartsTooltip
             contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
             labelStyle={{ fontWeight: 'bold' }}
             formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
           />
-          <Legend
-            verticalAlign="top"
-            align="center"
-            wrapperStyle={{ paddingBottom: 20 }}
-          />
+          <Legend verticalAlign="top" align="center" wrapperStyle={{ paddingBottom: 20 }} />
           <Bar dataKey="skipped" name="Skipped" fill="purple">
             {activityStats.map((entry, index) => (
               <Cell key={`cell-skipped-${index}`} fill="purple" />
@@ -92,26 +84,11 @@ const ActivityStats: React.FC = () => {
         </BarChart>
       </Box>
 
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="space-between"
-        sx={{
-          marginTop: 4,
-          padding: 0,
-          position: 'relative',
-        }}
-      >
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ marginTop: 4, padding: 0, position: 'relative' }}>
         <Button
           variant="contained"
           color="primary"
-          sx={{
-            marginLeft: 2,
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            backgroundColor: '#1565c0',
-            marginTop: '24px',
-          }}
+          sx={{ marginLeft: 2, fontSize: '1.5rem', fontWeight: 'bold', backgroundColor: '#1565c0', marginTop: '24px' }}
           onClick={() => navigate('/view-bpmn')}
         >
           ←
@@ -119,13 +96,7 @@ const ActivityStats: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          sx={{
-            marginRight: 2,
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            backgroundColor: '#1565c0',
-            marginTop: '24px',
-          }}
+          sx={{ marginRight: 2, fontSize: '1.5rem', fontWeight: 'bold', backgroundColor: '#1565c0', marginTop: '24px' }}
           onClick={() => navigate('/heatmap-aggr')}
         >
           →

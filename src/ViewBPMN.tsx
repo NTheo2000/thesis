@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Button, Stack } from '@mui/material';
+import { Box, Typography, Button, Stack, Tooltip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { useFileContext } from './FileContext';
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
+import InfoIcon from '@mui/icons-material/Info';
 
 const COLORS = {
   red: { stroke: 'red', fill: 'lightpink' },
@@ -221,10 +222,16 @@ const ViewBPMN: React.FC = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1200, margin: '0 auto', textAlign: 'center', padding: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        BPMN File Viewer
-      </Typography>
-
+      <Stack direction="row" justifyContent="center" alignItems="center" spacing={1}>
+        <Typography variant="h4" gutterBottom>
+          BPMN File Viewer
+        </Typography>
+        <Tooltip title="Where exactly does the process execution differ from the guideline? How does alternative behavior look like? This can relate to different control-flow relations, but also resource and data constraints. It can be explored on an event, trace, and log level. The task is similar 'Describe-Identify-Guideline Violation', but here the violation is not presented but needs to be explored by the analyst." arrow>
+          <IconButton>
+            <InfoIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
       <Box
         ref={bpmnContainerRef}
         sx={{
@@ -267,7 +274,7 @@ const ViewBPMN: React.FC = () => {
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip />
+          
           </PieChart>
         </Box>
       </Box>
@@ -307,7 +314,6 @@ const ViewBPMN: React.FC = () => {
 };
 
 export default ViewBPMN;
-
 
 
           

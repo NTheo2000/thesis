@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { Slider, Box, Typography, Button } from '@mui/material';
+import { Slider, Box, Typography, Button, Tooltip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, Tooltip as ChartTooltip, Legend } from 'chart.js';
 import { Bubble } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import CachedIcon from '@mui/icons-material/Cached';
+import InfoIcon from '@mui/icons-material/Info';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, Tooltip, Legend, zoomPlugin);
+ChartJS.register(CategoryScale, LinearScale, PointElement, ChartTooltip, Legend, zoomPlugin);
 
 const getColorForValue = (value: number): string => {
   const colors = [
@@ -137,9 +138,16 @@ const ConformanceOutcomeChart: React.FC = () => {
 
   return (
     <Box sx={{ width: 800, height: 600, margin: '0 auto', position: 'relative' }}>
-      <Typography variant="h5" gutterBottom align="center">
-        Bubble Chart: Conformance vs Percentage Ending with "A_finalized"
-      </Typography>
+      <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+        <Typography variant="h5" gutterBottom align="center">
+          Bubble Chart: Conformance vs Percentage Ending with "A_finalized"
+        </Typography>
+        <Tooltip title="Do cases with a higher degree of conformance lead to a higher probability of a positive process outcome? To answer this, we compare sub-logs with different degrees of conformance w.r.t. to their corresponding probability of a positive outcome (e.g., survival probability) over time." arrow>
+          <IconButton>
+            <InfoIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       <Typography variant="h6" gutterBottom>
         Conformance Threshold
