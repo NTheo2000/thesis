@@ -71,15 +71,22 @@ const ViewBPMN: React.FC = () => {
     if (modelerRef.current) {
       const elementRegistry = modelerRef.current.get('elementRegistry') as any;
       const modeling = modelerRef.current.get('modeling') as any;
-
+      
       const element = elementRegistry.get(activityId);
       if (element) {
         modeling.setColor([element], color);
+        
+        // Change text color to black
+        const gfx = document.querySelector(`[data-element-id="${activityId}"] text`);
+        if (gfx) {
+          (gfx as SVGTextElement).style.fill = "black"; // Set text color to black
+        }
       } else {
         console.warn(`Element with ID ${activityId} not found`);
       }
     }
   };
+  
 
   const applyColors = () => {
     const redActivities = [
