@@ -71,15 +71,15 @@ const ViewBPMN: React.FC = () => {
     if (modelerRef.current) {
       const elementRegistry = modelerRef.current.get('elementRegistry') as any;
       const modeling = modelerRef.current.get('modeling') as any;
-      
+  
       const element = elementRegistry.get(activityId);
       if (element) {
         modeling.setColor([element], color);
         
-        // Change text color to black
+        // Change text color to black for visibility
         const gfx = document.querySelector(`[data-element-id="${activityId}"] text`);
         if (gfx) {
-          (gfx as SVGTextElement).style.fill = "black"; // Set text color to black
+          (gfx as SVGTextElement).style.fill = "black"; 
         }
       } else {
         console.warn(`Element with ID ${activityId} not found`);
@@ -87,34 +87,36 @@ const ViewBPMN: React.FC = () => {
     }
   };
   
+  
 
+  const gradientColors = [
+    '#67000d', '#a50f15', '#cb181d', '#ef3b2c', '#fb6a4a', 
+    '#fc9272', '#fcbba1', '#fee0d2', '#fff5f0'
+  ];
+  
+  const getGradientColor = (value: number) => {
+    // Scale value from 0 (low) to 1 (high)
+    const index = Math.min(Math.floor(value * (gradientColors.length - 1)), gradientColors.length - 1);
+    return { stroke: gradientColors[index], fill: gradientColors[index] };
+  };
+  
   const applyColors = () => {
-    const redActivities = [
-      'Activity_16j9p78', 'Activity_0h8ae1b', 'Activity_1ua672n', 'Activity_00kmeo1',
-      'Activity_0ect789', 'Activity_1b8fzfh', 'Activity_0v8bmmj', 'Activity_1vy44rn',
-      'Activity_1s7bzv0', 'Activity_12k66qk', 'Activity_1drj3wk',
-    ];
-    redActivities.forEach((id) => highlightActivity(id, COLORS.red));
-
-    const orangeActivities = [
-      'Activity_0y75frc', 'Activity_17dszm4', 'Activity_0y9in93', 'Activity_14fjgjx',
-      'Activity_0bi3xvb', 'Activity_1ttad5g',
-    ];
-    orangeActivities.forEach((id) => highlightActivity(id, COLORS.orange));
-
-    const greenActivities = [
-      'Activity_0h5rfru', 'Activity_0vwot0o', 'Activity_16cyojo', 'Activity_0dkgijr',
-      'Activity_1i0g780', 'Activity_1pkrvgt', 'Activity_077hrrh', 'Activity_1e3872g',
-      'Activity_1q0ivgg', 'Activity_03fzalw',
-    ];
-    greenActivities.forEach((id) => highlightActivity(id, COLORS.green));
-
+    Object.keys(activityStats).forEach((activityId) => {
+      const stats = activityStats[activityId as keyof typeof activityStats];
+      
+      // Define the "conformance" based on some criteria (example: inserted/skipped ratio)
+      const conformanceScore = stats.inserted / (stats.skipped + stats.inserted); // Normalize to 0-1
+  
+      highlightActivity(activityId, getGradientColor(conformanceScore));
+    });
+  
     setActivityCounts({
-      red: redActivities.length,
-      orange: orangeActivities.length,
-      green: greenActivities.length,
+      red: Object.keys(activityStats).length, // Total activities tracked
+      orange: 0, 
+      green: 0, 
     });
   };
+  
 
   useEffect(() => {
     if (bpmnFileContent && bpmnContainerRef.current) {
