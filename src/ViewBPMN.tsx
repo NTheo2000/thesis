@@ -24,40 +24,8 @@ const ViewBPMN: React.FC = () => {
     green: 0,
   });
 
-  const activityStats = {
-    // Red activities
-    Activity_16j9p78: { skipped: 33, inserted: 15 },
-    Activity_0h8ae1b: { skipped: 34, inserted: 68 },
-    Activity_1ua672n: { skipped: 37, inserted: 55 },
-    Activity_00kmeo1: { skipped: 6, inserted: 20 },
-    Activity_0ect789: { skipped: 89, inserted: 30 },
-    Activity_1b8fzfh: { skipped: 77, inserted: 60 },
-    Activity_0v8bmmj: { skipped: 40, inserted: 18 },
-    Activity_1vy44rn: { skipped: 2, inserted: 10 },
-    Activity_1s7bzv0: { skipped: 90, inserted: 62 },
-    Activity_12k66qk: { skipped: 60, inserted: 80 },
-    Activity_1drj3wk: { skipped: 58, inserted: 69 },
+  const [activityStats, setActivityStats] = useState<{ [key: string]: { skipped: number; inserted: number } }>({});
 
-    // Orange activities
-    Activity_0y75frc: { skipped: 47, inserted: 12 },
-    Activity_17dszm4: { skipped: 70, inserted: 78 },
-    Activity_0y9in93: { skipped: 55, inserted: 15 },
-    Activity_14fjgjx: { skipped: 60, inserted: 18 },
-    Activity_0bi3xvb: { skipped: 30, inserted: 50 },
-    Activity_1ttad5g: { skipped: 85, inserted: 42 },
-
-    // Green activities
-    Activity_0h5rfru: { skipped: 1, inserted: 5 },
-    Activity_0vwot0o: { skipped: 55, inserted: 80 },
-    Activity_16cyojo: { skipped: 11, inserted: 70 },
-    Activity_0dkgijr: { skipped: 23, inserted: 63 },
-    Activity_1i0g780: { skipped: 34, inserted: 95 },
-    Activity_1pkrvgt: { skipped: 23, inserted: 54 },
-    Activity_077hrrh: { skipped: 13, inserted: 64 },
-    Activity_1e3872g: { skipped: 24, inserted: 74 },
-    Activity_1q0ivgg: { skipped: 15, inserted: 53 },
-    Activity_03fzalw: { skipped: 33, inserted: 84 },
-  };
 
   const disableHoverEffects = () => {
     if (modelerRef.current) {
@@ -100,22 +68,20 @@ const ViewBPMN: React.FC = () => {
     return { stroke: gradientColors[index], fill: gradientColors[index] };
   };
   
-  const applyColors = () => {
-    Object.keys(activityStats).forEach((activityId) => {
-      const stats = activityStats[activityId as keyof typeof activityStats];
-      
-      // Define the "conformance" based on some criteria (example: inserted/skipped ratio)
-      const conformanceScore = stats.inserted / (stats.skipped + stats.inserted); // Normalize to 0-1
-  
+  const applyColors = (stats: Record<string, { skipped: number; inserted: number }>) => {
+    Object.keys(stats).forEach((activityId) => {
+      const activity = stats[activityId] || { skipped: 0, inserted: 0 };
+      const conformanceScore = activity.inserted / (activity.skipped + activity.inserted);
       highlightActivity(activityId, getGradientColor(conformanceScore));
     });
   
     setActivityCounts({
-      red: Object.keys(activityStats).length, // Total activities tracked
-      orange: 0, 
-      green: 0, 
+      red: Object.keys(stats).length,
+      orange: 0,
+      green: 0,
     });
   };
+  
   
 
   useEffect(() => {
@@ -126,6 +92,9 @@ const ViewBPMN: React.FC = () => {
         });
       }
 
+      
+      
+
       modelerRef.current
         .importXML(bpmnFileContent)
         .then(() => {
@@ -133,17 +102,36 @@ const ViewBPMN: React.FC = () => {
           const elementRegistry = modelerRef.current!.get('elementRegistry') as any;
 
           const elements = elementRegistry
-            .getAll()
-            .filter((element: any) => element.type === 'bpmn:Task')
-            .map((element: any) => ({
-              id: element.id,
-              name: element.businessObject.name || 'Unnamed Task',
-            }));
-
-          setExtractedElements(elements);
+          .getAll()
+          .filter((element: any) => element.type === 'bpmn:Task');
+        
+        const extractedElements = elements.map((element: any) => ({
+          id: element.id,
+          name: element.businessObject.name || 'Unnamed Task',
+        }));
+        
+        setExtractedElements(extractedElements);
+        
+        // Dynamically generate activityStats
+        const generatedStats = extractedElements.reduce(
+          (acc: Record<string, { skipped: number; inserted: number }>, activity: { id: string; name: string }) => {
+            acc[activity.id] = {
+              skipped: Math.floor(Math.random() * 100), // Generate dummy values, replace with real logic if needed
+              inserted: Math.floor(Math.random() * 100),
+            };
+            return acc;
+          },
+          {} as Record<string, { skipped: number; inserted: number }>
+        );
+        
+        
+        
+        setActivityStats(generatedStats);
+        console.log("Updated activityStats:", generatedStats);
+        
           canvas.zoom('fit-viewport');
           disableHoverEffects();
-          applyColors();
+          applyColors(generatedStats);
 
           const eventBus = modelerRef.current!.get('eventBus') as any;
           eventBus.on('element.hover', (event: any) => {
@@ -159,8 +147,10 @@ const ViewBPMN: React.FC = () => {
               statsBox.style.pointerEvents = 'none';
               statsBox.style.zIndex = '1000';
               statsBox.style.width = '200px';
-
-              const stats = activityStats[element.id as keyof typeof activityStats] || { skipped: 0, inserted: 0 };
+          
+              // ✅ Use `generatedStats` instead of outdated `activityStats`
+              const stats = generatedStats[element.id] || { skipped: 0, inserted: 0 };
+          
               statsBox.innerHTML = `
                 <div style="margin-bottom: 8px; text-align: center; font-weight: bold; color: white; background-color: black; padding: 4px; border-radius: 4px;">Activity Stats</div>
                 <div style="display: flex; align-items: center;">
@@ -178,22 +168,23 @@ const ViewBPMN: React.FC = () => {
                   <div style="color: black;">${stats.inserted}%</div>
                 </div>
               `;
-
+          
               document.body.appendChild(statsBox);
-
+          
               const onMove = (mouseEvent: MouseEvent) => {
                 statsBox.style.left = `${mouseEvent.pageX + 10}px`;
                 statsBox.style.top = `${mouseEvent.pageY + 10}px`;
               };
-
+          
               document.addEventListener('mousemove', onMove);
-
+          
               eventBus.once('element.out', () => {
                 document.body.removeChild(statsBox);
                 document.removeEventListener('mousemove', onMove);
               });
             }
           });
+          
         })
         .catch((error: unknown) => {
           console.error('Error rendering BPMN diagram:', error);
@@ -207,6 +198,13 @@ const ViewBPMN: React.FC = () => {
       }
     };
   }, [bpmnFileContent, setExtractedElements]);
+
+  useEffect(() => {
+    if (Object.keys(activityStats).length > 0) {
+      applyColors(activityStats);
+    }
+  }, [activityStats]);
+  
 
   const handleZoomIn = () => {
     const canvas = modelerRef.current?.get('canvas') as any;
@@ -320,7 +318,7 @@ const ViewBPMN: React.FC = () => {
 export default ViewBPMN;
 
 
-          
+
 
 
 
